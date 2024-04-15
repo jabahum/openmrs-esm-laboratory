@@ -83,8 +83,11 @@ const LaboratoryOrderReferalResults: React.FC<
 > = ({ patientUuid }) => {
   const { t } = useTranslation();
 
-  const { enableSendingLabTestsByEmail, laboratoryEncounterTypeUuid } =
-    useConfig();
+  const {
+    enableSendingLabTestsByEmail,
+    laboratoryEncounterTypeUuid,
+    artCardEncounterTypeUuid,
+  } = useConfig();
 
   const displayText = t(
     "referralLaboratoryTestsDisplayTextTitle",
@@ -112,14 +115,17 @@ const LaboratoryOrderReferalResults: React.FC<
   const sortedLabRequests = useMemo(() => {
     return [...items]
       ?.filter(
-        (item) => item?.encounterType?.uuid === laboratoryEncounterTypeUuid
+        (item) =>
+          (item?.encounterType?.uuid === laboratoryEncounterTypeUuid ||
+            item?.encounterType?.uuid === artCardEncounterTypeUuid) &&
+          item?.orders?.filter((item) => item?.instructions === "REFER TO CPHL")
       )
       ?.sort((a, b) => {
         const dateA = new Date(a.encounterDatetime);
         const dateB = new Date(b.encounterDatetime);
         return dateB.getTime() - dateA.getTime();
       });
-  }, [items, laboratoryEncounterTypeUuid]);
+  }, [artCardEncounterTypeUuid, items, laboratoryEncounterTypeUuid]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [laboratoryOrders, setLaboratoryOrders] = useState(sortedLabRequests);
@@ -193,13 +199,6 @@ const LaboratoryOrderReferalResults: React.FC<
     );
   };
 
-  const LaunchLabRequestForm: React.FC = () => {
-    return (
-      <IconButton label="Add">
-        <Add />
-      </IconButton>
-    );
-  };
   const PrintButtonAction: React.FC<PrintProps> = ({ encounter }) => {
     const { patient } = useGetPatientByUuid(encounter.patient.uuid);
 
@@ -256,8 +255,7 @@ const LaboratoryOrderReferalResults: React.FC<
       { id: 1, header: t("tests", "Tests"), key: "orders" },
       { id: 2, header: t("location", "Location"), key: "location" },
       { id: 3, header: t("status", "Status"), key: "status" },
-      { id: 4, header: t("referral", "Referral"), key: "referral" },
-      { id: 5, header: t("actions", "Action"), key: "actions" },
+      { id: 4, header: t("actions", "Action"), key: "actions" },
     ],
     [t]
   );
@@ -294,7 +292,6 @@ const LaboratoryOrderReferalResults: React.FC<
       ),
       location: entry?.location?.display,
       status: "--",
-      referral: "--",
       actions: (
         <div style={{ display: "flex" }}>
           <EditReferralAction

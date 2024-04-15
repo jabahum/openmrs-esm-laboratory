@@ -58,7 +58,6 @@ import { OrderTagStyle, useGetPatientByUuid } from "../../utils/functions";
 import {
   ResourceRepresentation,
   Result,
-  getOrderColor,
 } from "../patient-laboratory-order-results.resource";
 import { useLaboratoryOrderResultsPages } from "../patient-laboratory-order-results-table.resource";
 import { CardHeader } from "@openmrs/esm-patient-common-lib";
@@ -76,8 +75,11 @@ const LaboratoryPastTestOrderResults: React.FC<
 > = ({ patientUuid }) => {
   const { t } = useTranslation();
 
-  const { enableSendingLabTestsByEmail, laboratoryEncounterTypeUuid } =
-    useConfig();
+  const {
+    enableSendingLabTestsByEmail,
+    laboratoryEncounterTypeUuid,
+    artCardEncounterTypeUuid,
+  } = useConfig();
 
   const displayText = t(
     "pastLaboratoryTestsDisplayTextTitle",
@@ -96,14 +98,16 @@ const LaboratoryPastTestOrderResults: React.FC<
   const sortedLabRequests = useMemo(() => {
     return [...items]
       ?.filter(
-        (item) => item?.encounterType?.uuid === laboratoryEncounterTypeUuid
+        (item) =>
+          item?.encounterType?.uuid === laboratoryEncounterTypeUuid ||
+          item?.encounterType?.uuid === artCardEncounterTypeUuid
       )
       ?.sort((a, b) => {
         const dateA = new Date(a.encounterDatetime);
         const dateB = new Date(b.encounterDatetime);
         return dateB.getTime() - dateA.getTime();
       });
-  }, [items, laboratoryEncounterTypeUuid]);
+  }, [artCardEncounterTypeUuid, items, laboratoryEncounterTypeUuid]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [laboratoryOrders, setLaboratoryOrders] = useState(sortedLabRequests);
@@ -151,13 +155,6 @@ const LaboratoryPastTestOrderResults: React.FC<
     );
   };
 
-  const LaunchLabRequestForm: React.FC = () => {
-    return (
-      <IconButton label="Add">
-        <Add />
-      </IconButton>
-    );
-  };
   const PrintButtonAction: React.FC<PrintProps> = ({ encounter }) => {
     const { patient } = useGetPatientByUuid(encounter.patient.uuid);
 
