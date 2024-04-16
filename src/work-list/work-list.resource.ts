@@ -117,15 +117,16 @@ export interface SpecimenSource {
   links: Link[];
 }
 
-export function useGetOrdersWorklist(fulfillerStatus: string) {
+export function useGetOrdersWorklist(fulfillerStatus: string, date?: string) {
   const { laboratoryOrderTypeUuid } = useConfig();
-
   const orderTypeQuery =
     laboratoryOrderTypeUuid !== ""
       ? `orderTypes=${laboratoryOrderTypeUuid}`
       : "";
-
-  const apiUrl = `${restBaseUrl}/order?${orderTypeQuery}&fulfillerStatus=${fulfillerStatus}&v=full`;
+  let apiUrl = `${restBaseUrl}/order?${orderTypeQuery}&fulfillerStatus=${fulfillerStatus}&v=full`;
+  if (date) {
+    apiUrl += `&activatedOnOrAfterDate=${date}`;
+  }
 
   const mutateOrders = useCallback(
     () =>
