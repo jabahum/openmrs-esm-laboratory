@@ -28,13 +28,14 @@ import {
 import styles from "./laboratory-queue.scss";
 import { useGetOrdersWorklist } from "../work-list/work-list.resource";
 import OrderCustomOverflowMenuComponent from "../ui-components/overflow-menu.component";
+import dayjs from "dayjs";
 
 interface LaboratoryPatientListProps {}
 
 const TestsOrderedList: React.FC<LaboratoryPatientListProps> = () => {
   const { t } = useTranslation();
-
-  const { data: pickedOrderList, isLoading } = useGetOrdersWorklist("");
+  const today = dayjs(new Date()).format("YYYY-MM-DD");
+  const { data: pickedOrderList, isLoading } = useGetOrdersWorklist("", today);
 
   const data = pickedOrderList.filter(
     (item) =>
