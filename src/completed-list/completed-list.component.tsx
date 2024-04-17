@@ -26,6 +26,7 @@ import {
 } from "@carbon/react";
 import styles from "./completed-list.scss";
 import { getStatusColor } from "../utils/functions";
+import dayjs from "dayjs";
 
 interface CompletedListProps {
   fulfillerStatus: string;
@@ -34,8 +35,12 @@ interface CompletedListProps {
 const CompletedList: React.FC<CompletedListProps> = ({ fulfillerStatus }) => {
   const { t } = useTranslation();
 
-  const { data: completedOrderList, isLoading } =
-    useGetOrdersWorklist(fulfillerStatus);
+  const today = dayjs(new Date()).format("YYYY-MM-DD");
+
+  const { data: completedOrderList, isLoading } = useGetOrdersWorklist(
+    fulfillerStatus,
+    today
+  );
 
   const pageSizes = [10, 20, 30, 40, 50];
   const [currentPageSize, setPageSize] = useState(10);
@@ -63,7 +68,12 @@ const CompletedList: React.FC<CompletedListProps> = ({ fulfillerStatus }) => {
 
   const tableRows = useMemo(() => {
     return paginatedCompletedOrderEntries
-      ?.filter((item) => item?.fulfillerStatus === fulfillerStatus)
+      ?.filter(
+        (item) =>
+          item?.fulfillerStatus === fulfillerStatus ||
+          item?.action === "NEW" ||
+          item?.action === "REVISE"
+      )
       .map((entry) => ({
         ...entry,
         id: entry?.uuid,

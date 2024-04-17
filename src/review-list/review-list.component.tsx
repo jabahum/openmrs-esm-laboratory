@@ -29,6 +29,7 @@ import {
 import styles from "./review-list.scss";
 import { Add } from "@carbon/react/icons";
 import { getStatusColor } from "../utils/functions";
+import dayjs from "dayjs";
 
 interface ReviewlistProps {
   fulfillerStatus: string;
@@ -66,8 +67,12 @@ const ApproveTestMenu: React.FC<ApproveResultMenuProps> = ({
 const ReviewList: React.FC<ReviewlistProps> = ({ fulfillerStatus }) => {
   const { t } = useTranslation();
 
-  const { data: reviewOrderEntries, isLoading } =
-    useGetOrdersWorklist(fulfillerStatus);
+  const today = dayjs(new Date()).format("YYYY-MM-DD");
+
+  const { data: reviewOrderEntries, isLoading } = useGetOrdersWorklist(
+    fulfillerStatus,
+    today
+  );
 
   const filtered = reviewOrderEntries?.filter(
     (item) =>
