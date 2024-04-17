@@ -71,10 +71,11 @@ const ReviewList: React.FC<ReviewlistProps> = ({ fulfillerStatus }) => {
 
   const filtered = reviewOrderEntries?.filter(
     (item) =>
-      item?.action === "REVISE" &&
       item?.fulfillerStatus === "IN_PROGRESS" &&
       item?.dateStopped !== null &&
-      item?.instructions !== "REFER TO cphl"
+      (item?.instructions !== "REFER TO cphl" ||
+        item?.instructions === null ||
+        item?.instructions === undefined)
   );
 
   const pageSizes = [10, 20, 30, 40, 50];

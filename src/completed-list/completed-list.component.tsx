@@ -63,11 +63,7 @@ const CompletedList: React.FC<CompletedListProps> = ({ fulfillerStatus }) => {
 
   const tableRows = useMemo(() => {
     return paginatedCompletedOrderEntries
-      ?.filter(
-        (item) =>
-          (item?.action === "DISCONTINUE" || item?.action === "REVISE") &&
-          item?.fulfillerStatus === fulfillerStatus
-      )
+      ?.filter((item) => item?.fulfillerStatus === fulfillerStatus)
       .map((entry) => ({
         ...entry,
         id: entry?.uuid,
