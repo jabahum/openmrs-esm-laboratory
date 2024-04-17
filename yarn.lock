@@ -9191,13 +9191,6 @@ __metadata:
   linkType: hard
 
 "core-js-pure@npm:^3.36.0":
-  version: 3.36.1
-  resolution: "core-js-pure@npm:3.36.1"
-  checksum: 10/76389c2fb83d8fc5945129ff343801f60a99baf4ebf743521cb3b358f1f840ff4aeaa3676b48a4b09052140c7432776cdd5635ebf1b7a8b4b3bb1a2efcfd1c4c
-  languageName: node
-  linkType: hard
-
-"core-js-pure@npm:^3.36.0":
   version: 3.37.0
   resolution: "core-js-pure@npm:3.37.0"
   checksum: 10/196116e73370d075be9a95fe3605c210f8e53c7c18aeefe491fd9bc6442f2c1887d4b43128777bf4a5824d207e258578b507fc3d711a6ceb6144de500f2ffa23
@@ -11600,13 +11593,6 @@ __metadata:
   version: 3.0.2
   resolution: "extend@npm:3.0.2"
   checksum: 10/59e89e2dc798ec0f54b36d82f32a27d5f6472c53974f61ca098db5d4648430b725387b53449a34df38fd0392045434426b012f302b3cc049a6500ccf82877e4e
-  languageName: node
-  linkType: hard
-
-"extend@npm:~1.2.1":
-  version: 1.2.1
-  resolution: "extend@npm:1.2.1"
-  checksum: 10/bfebc6fd4d924f9a8872cfebbda8fc543bae58ca3ec7fe7a5189a706402bd465559b82a106db589088d60e8348e04d8597a1d3760cb5e3d8cf184bcd924ac569
   languageName: node
   linkType: hard
 
@@ -14051,13 +14037,6 @@ __metadata:
   version: 1.0.0
   resolution: "is-regexp@npm:1.0.0"
   checksum: 10/be692828e24cba479ec33644326fa98959ec68ba77965e0291088c1a741feaea4919d79f8031708f85fd25e39de002b4520622b55460660b9c369e6f7187faef
-  languageName: node
-  linkType: hard
-
-"is-retina@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "is-retina@npm:1.0.3"
-  checksum: 10/7f8306095851aaa55d7dd4a2edffb53942f45388d4d19299a788ca7d30f9f2b7ae0884237b2262a5f8a6d9d5f57e934da3fdbec60b174469054ef080ac29012f
   languageName: node
   linkType: hard
 
