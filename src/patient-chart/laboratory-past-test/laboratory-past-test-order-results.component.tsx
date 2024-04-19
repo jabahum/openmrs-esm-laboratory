@@ -38,7 +38,6 @@ import {
   TableExpandRow,
   TableExpandedRow,
   Button,
-  IconButton,
   InlineLoading,
 } from "@carbon/react";
 

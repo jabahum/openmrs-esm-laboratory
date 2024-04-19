@@ -36,14 +36,12 @@ import {
   TableExpandRow,
   TableExpandedRow,
   Button,
-  IconButton,
   InlineLoading,
 } from "@carbon/react";
 
 import {
   Printer,
   MailAll,
-  Add,
   Checkmark,
   SendAlt,
   NotSent,
@@ -56,7 +54,6 @@ import { OrderTagStyle, useGetPatientByUuid } from "../../utils/functions";
 import {
   ResourceRepresentation,
   Result,
-  getOrderColor,
 } from "../patient-laboratory-order-results.resource";
 import { useLaboratoryOrderResultsPages } from "../patient-laboratory-order-results-table.resource";
 import {
@@ -96,7 +93,6 @@ const LaboratoryOrderReferalResults: React.FC<
 
   const {
     items,
-    tableHeaders,
     currentPage,
     pageSizes,
     totalItems,

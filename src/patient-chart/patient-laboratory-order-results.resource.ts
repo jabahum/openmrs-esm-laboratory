@@ -1,9 +1,4 @@
-import {
-  formatDate,
-  openmrsFetch,
-  restBaseUrl,
-  useConfig,
-} from "@openmrs/esm-framework";
+import { openmrsFetch, restBaseUrl, useConfig } from "@openmrs/esm-framework";
 import useSWR from "swr";
 
 export interface LaboratoryResponse {
@@ -401,20 +396,6 @@ export interface OrderType {
   resourceVersion: string;
 }
 
-export const getOrderColor = (activated: string, stopped: string) => {
-  const numAct = formatWaitTime(activated);
-  let testStopped: Number;
-  if (stopped === null) {
-    testStopped = 0;
-  }
-
-  if (numAct >= 0 && testStopped === 0) {
-    return "#6F6F6F"; // #6F6F6F
-  } else {
-    return "green"; // green
-  }
-};
-
 export const formatWaitTime = (waitTime: string) => {
   const num = parseInt(waitTime);
   const hours = num / 60;
@@ -473,7 +454,16 @@ export function usePatientLaboratoryOrders(filter: LaboratoryOrderFilter) {
   >(apiUrl, openmrsFetch, { refreshInterval: 3000 });
 
   return {
-    items: data?.data ? data?.data?.results : [],
+    items: data?.data
+      ? data?.data?.results.filter(
+          (item) =>
+            item?.orders.length !== 0 &&
+            item.orders.filter(
+              (item) =>
+                item?.orderType?.uuid !== "131168f4-15f5-102d-96e4-000c29c2a5d7"
+            )
+        )
+      : [],
     isLoading,
     isError: error,
   };

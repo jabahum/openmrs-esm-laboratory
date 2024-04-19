@@ -29,6 +29,7 @@ import {
 import styles from "./review-list.scss";
 import { Add } from "@carbon/react/icons";
 import { getStatusColor } from "../utils/functions";
+import dayjs from "dayjs";
 
 interface ReviewlistProps {
   fulfillerStatus: string;
@@ -66,15 +67,20 @@ const ApproveTestMenu: React.FC<ApproveResultMenuProps> = ({
 const ReviewList: React.FC<ReviewlistProps> = ({ fulfillerStatus }) => {
   const { t } = useTranslation();
 
-  const { data: reviewOrderEntries, isLoading } =
-    useGetOrdersWorklist(fulfillerStatus);
+  const today = dayjs(new Date()).format("YYYY-MM-DD");
+
+  const { data: reviewOrderEntries, isLoading } = useGetOrdersWorklist(
+    fulfillerStatus,
+    today
+  );
 
   const filtered = reviewOrderEntries?.filter(
     (item) =>
-      item?.action === "REVISE" &&
       item?.fulfillerStatus === "IN_PROGRESS" &&
       item?.dateStopped !== null &&
-      item?.instructions !== "REFER TO cphl"
+      (item?.instructions !== "REFER TO cphl" ||
+        item?.instructions === null ||
+        item?.instructions === undefined)
   );
 
   const pageSizes = [10, 20, 30, 40, 50];

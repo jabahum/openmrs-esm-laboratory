@@ -2,11 +2,14 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import SummaryTile from "../summary-tiles/summary-tile.component";
 import { useLabTestsStats } from "../summary-tiles/laboratory-summary.resource";
+import dayjs from "dayjs";
 
 const ReferredTileComponent = () => {
   const { t } = useTranslation();
 
-  const { data } = useLabTestsStats("COMPLETED");
+  const today = dayjs(new Date()).format("YYYY-MM-DD");
+
+  const { data } = useLabTestsStats("COMPLETED", today);
 
   return (
     <SummaryTile

@@ -9,7 +9,7 @@ const ReferredTileComponent = () => {
   const { data } = useLabTestsStats("");
 
   const filteredData = data?.filter(
-    (item) => item?.fulfillerStatus === "EXCEPTION"
+    (item) => item?.fulfillerStatus === "EXCEPTION" || item?.action === "REVISE"
   );
 
   return (

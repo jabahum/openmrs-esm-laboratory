@@ -36,6 +36,7 @@ import {
 import { launchOverlay } from "../components/overlay/hook";
 import ResultForm from "../results/result-form.component";
 import { getStatusColor } from "../utils/functions";
+import dayjs from "dayjs";
 
 interface WorklistProps {
   fulfillerStatus: string;
@@ -53,8 +54,12 @@ interface RejectOrderProps {
 const WorkList: React.FC<WorklistProps> = ({ fulfillerStatus }) => {
   const { t } = useTranslation();
 
-  const { data: pickedOrderEntries, isLoading } =
-    useGetOrdersWorklist(fulfillerStatus);
+  const today = dayjs(new Date()).format("YYYY-MM-DD");
+
+  const { data: pickedOrderEntries, isLoading } = useGetOrdersWorklist(
+    fulfillerStatus,
+    today
+  );
 
   const pageSizes = [10, 20, 30, 40, 50];
   const [currentPageSize, setPageSize] = useState(10);

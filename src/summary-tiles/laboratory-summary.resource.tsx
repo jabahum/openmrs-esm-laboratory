@@ -41,7 +41,7 @@ export function useServices() {
 }
 
 // worklist
-export function useLabTestsStats(fulfillerStatus: string) {
+export function useLabTestsStats(fulfillerStatus: string, date?: string) {
   const { laboratoryOrderTypeUuid } = useConfig();
 
   const orderTypeQuery =
@@ -49,12 +49,16 @@ export function useLabTestsStats(fulfillerStatus: string) {
       ? `orderTypes=${laboratoryOrderTypeUuid}`
       : "";
 
-  const apiUrl = `${restBaseUrl}/order?${orderTypeQuery}&fulfillerStatus=${fulfillerStatus}&v=full`;
+  let apiUrl = `${restBaseUrl}/order?${orderTypeQuery}&fulfillerStatus=${fulfillerStatus}&v=full`;
 
-  const { data, error, isLoading } = useSWR<
+  if (date) {
+    apiUrl += `&activatedOnOrAfterDate=${date}`;
+  }
+
+  const { data, error, isLoading, mutate } = useSWR<
     { data: { results: Array<Result> } },
     Error
-  >(apiUrl, openmrsFetch);
+  >(apiUrl, openmrsFetch, { refreshInterval: 3000 });
   return {
     data: data?.data ? data?.data?.results : [],
     isLoading,
