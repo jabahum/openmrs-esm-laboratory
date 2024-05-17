@@ -58,10 +58,11 @@ const TestsOrderedList: React.FC<LaboratoryPatientListProps> = () => {
 
     { id: 1, header: t("orderNumber", "Order Number"), key: "orderNumber" },
     { id: 2, header: t("patient", "Patient"), key: "patient" },
-    { id: 3, header: t("test", "Test"), key: "test" },
-    { id: 4, header: t("orderer", "Ordered By"), key: "orderer" },
-    { id: 5, header: t("urgency", "Urgency"), key: "urgency" },
-    { id: 6, header: t("actions", "Actions"), key: "actions" },
+    { id: 3, header: t("artNumber", "Art Number"), key: "artNumber" },
+    { id: 4, header: t("test", "Test"), key: "test" },
+    { id: 5, header: t("orderer", "Ordered By"), key: "orderer" },
+    { id: 6, header: t("urgency", "Urgency"), key: "urgency" },
+    { id: 7, header: t("actions", "Actions"), key: "actions" },
   ];
 
   const tableRows = useMemo(() => {
@@ -74,6 +75,10 @@ const TestsOrderedList: React.FC<LaboratoryPatientListProps> = () => {
         </span>
       ),
       patient: entry?.patient?.display.split("-")[1],
+      artNumber: entry.patient?.identifiers.find(
+        (item) =>
+          item?.identifierType?.uuid === "e1731641-30ab-102d-86b0-7a5022ba4115"
+      ).display,
       orderNumber: entry?.orderNumber,
       test: entry?.concept?.display,
       action: entry?.action,
