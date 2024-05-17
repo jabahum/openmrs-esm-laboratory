@@ -28,7 +28,8 @@ const RejectedTestsList: React.FC = () => {
   const { data: pickedOrderList, isLoading } = useGetOrdersWorklist("");
 
   const data = pickedOrderList.filter(
-    (item) => item?.fulfillerStatus === "EXCEPTION" || item?.action === "REVISE"
+    (item) =>
+      item?.fulfillerStatus === "EXCEPTION" || item?.action === "REJECTED"
   );
 
   const pageSizes = [10, 20, 30, 40, 50];
