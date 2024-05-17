@@ -25,7 +25,7 @@ import { useGetOrdersWorklist } from "../work-list/work-list.resource";
 const RejectedTestsList: React.FC = () => {
   const { t } = useTranslation();
 
-  const { data: pickedOrderList, isLoading } = useGetOrdersWorklist("");
+  const { data: pickedOrderList, isLoading } = useGetOrdersWorklist("REJECTED");
 
   const data = pickedOrderList.filter(
     (item) =>
