@@ -81,6 +81,7 @@ const LaboratoryActiveTestOrderResults: React.FC<
     enableSendingLabTestsByEmail,
     laboratoryEncounterTypeUuid,
     artCardEncounterTypeUuid,
+    laboratoryOrderTypeUuid,
   } = useConfig();
 
   const displayText = t(
@@ -103,15 +104,23 @@ const LaboratoryActiveTestOrderResults: React.FC<
     return [...items]
       ?.filter(
         (item) =>
-          item?.encounterType?.uuid === laboratoryEncounterTypeUuid ||
-          item?.encounterType?.uuid === artCardEncounterTypeUuid
+          (item?.encounterType?.uuid === laboratoryEncounterTypeUuid ||
+            item?.encounterType?.uuid === artCardEncounterTypeUuid) &&
+          item.orders.filter(
+            (order) => order.orderType === laboratoryOrderTypeUuid
+          )
       )
       ?.sort((a, b) => {
         const dateA = new Date(a.encounterDatetime);
         const dateB = new Date(b.encounterDatetime);
         return dateB.getTime() - dateA.getTime();
       });
-  }, [artCardEncounterTypeUuid, items, laboratoryEncounterTypeUuid]);
+  }, [
+    artCardEncounterTypeUuid,
+    items,
+    laboratoryEncounterTypeUuid,
+    laboratoryOrderTypeUuid,
+  ]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [laboratoryOrders, setLaboratoryOrders] = useState(sortedLabRequests);
