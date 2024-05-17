@@ -116,9 +116,9 @@ const LaboratoryOrderReferalResults: React.FC<
           (item?.encounterType?.uuid === laboratoryEncounterTypeUuid ||
             item?.encounterType?.uuid === artCardEncounterTypeUuid) &&
           item?.orders?.filter(
-            (item) =>
-              item?.instructions === "REFER TO cphl" ||
-              item.orderType === laboratoryOrderTypeUuid
+            (order) =>
+              order?.instructions === "REFER TO cphl" ||
+              order.orderType === laboratoryOrderTypeUuid
           )
       )
       ?.sort((a, b) => {

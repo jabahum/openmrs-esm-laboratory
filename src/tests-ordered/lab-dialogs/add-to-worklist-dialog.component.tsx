@@ -26,6 +26,7 @@ import {
   useSpecimenTypes,
 } from "./add-to-worklist-dialog.resource";
 import { Order } from "../../types/patient-queues";
+import { extractErrorMessagesFromResponse } from "../../utils/functions";
 
 interface AddToWorklistDialogProps {
   queueId;
@@ -85,11 +86,13 @@ const AddToWorklistDialog: React.FC<AddToWorklistDialogProps> = ({
         closeModal();
       },
       (error) => {
+        const errorMessages = extractErrorMessagesFromResponse(error);
+
         showNotification({
           title: t(`errorPicking an order', 'Error Picking an Order`),
           kind: "error",
           critical: true,
-          description: error?.message,
+          description: errorMessages.join(", "),
         });
       }
     );
@@ -115,12 +118,14 @@ const AddToWorklistDialog: React.FC<AddToWorklistDialogProps> = ({
           ),
         });
       },
-      (err) => {
+      (error) => {
+        const errorMessages = extractErrorMessagesFromResponse(error);
+
         showNotification({
           title: t(`errorGeneratingId', 'Error Generating Sample Id`),
           kind: "error",
           critical: true,
-          description: err?.message,
+          description: errorMessages.join(", "),
         });
       }
     );

@@ -17,6 +17,7 @@ import { useGetConceptById } from "../../patient-chart/results-summary/results-s
 import { ApproverOrder } from "./review-item.resource";
 import { showNotification, showSnackbar } from "@openmrs/esm-framework";
 import { Result } from "../../work-list/work-list.resource";
+import { extractErrorMessagesFromResponse } from "../../utils/functions";
 
 interface ReviewItemDialogProps {
   encounterUuid: string;
@@ -43,9 +44,9 @@ const ReviewItem: React.FC<ReviewItemDialogProps> = ({
 
   const testsOrder = useMemo(() => {
     return encounter?.obs?.filter(
-      (item) => item?.order?.display === orderItem?.display
+      (item) => item?.order?.display === "Test Order"
     );
-  }, [encounter?.obs, orderItem?.display]);
+  }, [encounter?.obs]);
 
   const filteredGroupedResults = useMemo(() => {
     let groupedResults = [];
@@ -74,12 +75,14 @@ const ReviewItem: React.FC<ReviewItemDialogProps> = ({
         });
         closeModal();
       },
-      (err) => {
+      (error) => {
+        const errorMessages = extractErrorMessagesFromResponse(error);
+
         showNotification({
           title: t(`errorApproving order', 'Error Approving a order`),
           kind: "error",
           critical: true,
-          description: err?.message,
+          description: errorMessages.join(", "),
         });
       }
     );

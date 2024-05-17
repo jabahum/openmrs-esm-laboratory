@@ -28,7 +28,7 @@ const RejectedTestsList: React.FC = () => {
   const { data: pickedOrderList, isLoading } = useGetOrdersWorklist("");
 
   const data = pickedOrderList.filter(
-    (item) => item?.fulfillerStatus === "EXCEPTION" || item?.action === "REVISE"
+    (item) => item?.fulfillerStatus === "DECLINED"
   );
 
   const pageSizes = [10, 20, 30, 40, 50];
@@ -44,12 +44,17 @@ const RejectedTestsList: React.FC = () => {
     { id: 0, header: t("date", "Date"), key: "date" },
 
     { id: 1, header: t("orderNumber", "Order Number"), key: "orderNumber" },
-    { id: 2, header: t("patient", "Patient"), key: "patient" },
-    { id: 3, header: t("test", "Test"), key: "test" },
-    { id: 4, header: t("orderer", "Ordered By"), key: "orderer" },
-    { id: 5, header: t("urgency", "Urgency"), key: "urgency" },
     {
-      id: 6,
+      id: 2,
+      header: t("accessionNumber", "Accession Number"),
+      key: "accessionNumber",
+    },
+    { id: 3, header: t("patient", "Patient"), key: "patient" },
+    { id: 4, header: t("test", "Test"), key: "test" },
+    { id: 5, header: t("orderer", "Ordered By"), key: "orderer" },
+    { id: 6, header: t("urgency", "Urgency"), key: "urgency" },
+    {
+      id: 7,
       header: t("fulfillerComment", "Reason for Rejection"),
       key: "fulfillerComment",
     },
