@@ -84,6 +84,7 @@ const LaboratoryOrderReferalResults: React.FC<
     enableSendingLabTestsByEmail,
     laboratoryEncounterTypeUuid,
     artCardEncounterTypeUuid,
+    laboratoryOrderTypeUuid,
   } = useConfig();
 
   const displayText = t(
@@ -114,14 +115,23 @@ const LaboratoryOrderReferalResults: React.FC<
         (item) =>
           (item?.encounterType?.uuid === laboratoryEncounterTypeUuid ||
             item?.encounterType?.uuid === artCardEncounterTypeUuid) &&
-          item?.orders?.filter((item) => item?.instructions === "REFER TO cphl")
+          item?.orders?.filter(
+            (item) =>
+              item?.instructions === "REFER TO cphl" ||
+              item.orderType === laboratoryOrderTypeUuid
+          )
       )
       ?.sort((a, b) => {
         const dateA = new Date(a.encounterDatetime);
         const dateB = new Date(b.encounterDatetime);
         return dateB.getTime() - dateA.getTime();
       });
-  }, [artCardEncounterTypeUuid, items, laboratoryEncounterTypeUuid]);
+  }, [
+    artCardEncounterTypeUuid,
+    items,
+    laboratoryEncounterTypeUuid,
+    laboratoryOrderTypeUuid,
+  ]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [laboratoryOrders, setLaboratoryOrders] = useState(sortedLabRequests);
