@@ -50,11 +50,13 @@ const RejectedTestsList: React.FC = () => {
       key: "accessionNumber",
     },
     { id: 3, header: t("patient", "Patient"), key: "patient" },
-    { id: 4, header: t("test", "Test"), key: "test" },
-    { id: 5, header: t("orderer", "Ordered By"), key: "orderer" },
-    { id: 6, header: t("urgency", "Urgency"), key: "urgency" },
+    { id: 4, header: t("artNumber", "Art Number"), key: "artNumber" },
+
+    { id: 5, header: t("test", "Test"), key: "test" },
+    { id: 6, header: t("orderer", "Ordered By"), key: "orderer" },
+    { id: 7, header: t("urgency", "Urgency"), key: "urgency" },
     {
-      id: 7,
+      id: 8,
       header: t("fulfillerComment", "Reason for Rejection"),
       key: "fulfillerComment",
     },
@@ -70,6 +72,10 @@ const RejectedTestsList: React.FC = () => {
         </span>
       ),
       patient: entry?.patient?.display.split("-")[1],
+      artNumber: entry.patient?.identifiers.find(
+        (item) =>
+          item?.identifierType?.uuid === "e1731641-30ab-102d-86b0-7a5022ba4115"
+      ).display,
       orderNumber: entry?.orderNumber,
       accessionNumber: entry?.accessionNumber,
       test: entry?.concept?.display,
