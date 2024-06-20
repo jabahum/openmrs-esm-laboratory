@@ -35,11 +35,12 @@ interface CompletedListProps {
 const CompletedList: React.FC<CompletedListProps> = ({ fulfillerStatus }) => {
   const { t } = useTranslation();
 
-  const today = dayjs(new Date()).format("YYYY-MM-DD");
+  const fromDate = dayjs(new Date()).format("YYYY-MM-DD");
 
   const { data: completedOrderList, isLoading } = useGetOrdersWorklist(
     fulfillerStatus,
-    today
+    fromDate,
+    ""
   );
 
   const pageSizes = [10, 20, 30, 40, 50];

@@ -54,11 +54,12 @@ interface RejectOrderProps {
 const WorkList: React.FC<WorklistProps> = ({ fulfillerStatus }) => {
   const { t } = useTranslation();
 
-  const today = dayjs(new Date()).format("YYYY-MM-DD");
+  const fromDate = dayjs(new Date()).format("YYYY-MM-DD");
 
   const { data: pickedOrderEntries, isLoading } = useGetOrdersWorklist(
     fulfillerStatus,
-    today
+    fromDate,
+    ""
   );
 
   const pageSizes = [10, 20, 30, 40, 50];
@@ -68,8 +69,7 @@ const WorkList: React.FC<WorklistProps> = ({ fulfillerStatus }) => {
     (item) =>
       item?.fulfillerStatus === "IN_PROGRESS" &&
       item?.accessionNumber !== null &&
-      item?.dateStopped === null &&
-      item?.instructions !== "REFER TO cphl"
+      item?.dateStopped === null
   );
 
   const {

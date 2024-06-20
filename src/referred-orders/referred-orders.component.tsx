@@ -23,14 +23,23 @@ import {
   TableToolbarSearch,
   Layer,
   Tile,
+  DatePicker,
+  DatePickerInput,
 } from "@carbon/react";
 import { getStatusColor } from "../utils/functions";
 import styles from "./referred-orders.scss";
+import dayjs from "dayjs";
 
 const ReferredOrdersList: React.FC = () => {
   const { t } = useTranslation();
 
-  const { data: referredOrderList, isLoading } = useGetOrdersWorklist("");
+  const fromDate = dayjs(new Date()).format("YYYY-MM-DD");
+
+  const { data: referredOrderList, isLoading } = useGetOrdersWorklist(
+    "",
+    fromDate,
+    ""
+  );
 
   const pageSizes = [10, 20, 30, 40, 50];
   const [currentPageSize, setPageSize] = useState(10);
@@ -127,6 +136,22 @@ const ReferredOrdersList: React.FC = () => {
               }}
             >
               <TableToolbarContent>
+                <Layer style={{ margin: "5px" }}>
+                  <DatePicker datePickerType="range">
+                    <DatePickerInput
+                      id="date-picker-input-id-start"
+                      placeholder="mm/dd/yyyy"
+                      size="md"
+                      style={{ margin: "2px" }}
+                    />
+                    <DatePickerInput
+                      id="date-picker-input-id-finish"
+                      placeholder="mm/dd/yyyy"
+                      size="md"
+                      style={{ margin: "2px" }}
+                    />
+                  </DatePicker>
+                </Layer>
                 <Layer>
                   <TableToolbarSearch
                     expanded

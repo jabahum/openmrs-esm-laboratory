@@ -78,6 +78,7 @@ const LaboratoryOrdersTabs: React.FC = () => {
                     <ComponentContext.Provider
                       key={extension.id}
                       value={{
+                        featureName: "LabPanel",
                         moduleName: extension.moduleName,
                         extension: {
                           extensionId: extension.id,

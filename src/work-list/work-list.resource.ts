@@ -83,7 +83,11 @@ export interface IdentifierType {
   uuid: string;
 }
 
-export function useGetOrdersWorklist(fulfillerStatus: string, date?: string) {
+export function useGetOrdersWorklist(
+  fulfillerStatus: string,
+  dateFrom?: string,
+  dateTo?: string
+) {
   const { laboratoryOrderTypeUuid } = useConfig();
   const customRepresentation =
     "v=custom:(uuid,orderNumber,accessionNumber,instructions,careSetting:(uuid),encounter:(uuid,obs:(order:(uuid,display,patient:(uuid,display)))),fulfillerComment,orderType:(display),concept:(display,uuid),action,dateStopped,fulfillerStatus,dateActivated,orderer:(display),urgency,patient:(uuid,names:(display),display,gender,birthdate,identifiers:(voided,preferred,uuid,display,identifierType:(uuid))))";
@@ -92,8 +96,8 @@ export function useGetOrdersWorklist(fulfillerStatus: string, date?: string) {
       ? `orderTypes=${laboratoryOrderTypeUuid}`
       : "";
   let apiUrl = `${restBaseUrl}/order?${orderTypeQuery}&fulfillerStatus=${fulfillerStatus}&${customRepresentation}`;
-  if (date) {
-    apiUrl += `&activatedOnOrAfterDate=${date}`;
+  if (dateFrom) {
+    apiUrl += `&activatedOnOrAfterDate=${dateFrom}`;
   }
 
   const mutateOrders = useCallback(
