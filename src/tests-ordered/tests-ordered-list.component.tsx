@@ -15,8 +15,6 @@ import {
   Layer,
   Tile,
   TableToolbarSearch,
-  DatePicker,
-  DatePickerInput,
 } from "@carbon/react";
 import { OverflowMenuVertical } from "@carbon/react/icons";
 
@@ -30,19 +28,18 @@ import {
 import styles from "./laboratory-queue.scss";
 import { useGetOrdersWorklist } from "../work-list/work-list.resource";
 import OrderCustomOverflowMenuComponent from "../ui-components/overflow-menu.component";
-import dayjs from "dayjs";
+import { useOrderDate } from "../utils/functions";
 
 interface LaboratoryPatientListProps {}
 
 const TestsOrderedList: React.FC<LaboratoryPatientListProps> = () => {
   const { t } = useTranslation();
 
-  const fromDate = dayjs(new Date()).format("YYYY-MM-DD");
+  const { currentOrdersDate } = useOrderDate();
 
   const { data: pickedOrderList, isLoading } = useGetOrdersWorklist(
     "",
-    fromDate,
-    ""
+    currentOrdersDate
   );
 
   const data = pickedOrderList.filter(
@@ -146,22 +143,6 @@ const TestsOrderedList: React.FC<LaboratoryPatientListProps> = () => {
               }}
             >
               <TableToolbarContent>
-                <Layer style={{ margin: "5px" }}>
-                  <DatePicker datePickerType="range">
-                    <DatePickerInput
-                      id="date-picker-input-id-start"
-                      placeholder="mm/dd/yyyy"
-                      size="md"
-                      style={{ margin: "5px" }}
-                    />
-                    <DatePickerInput
-                      id="date-picker-input-id-finish"
-                      placeholder="mm/dd/yyyy"
-                      size="md"
-                      style={{ margin: "5px" }}
-                    />
-                  </DatePicker>
-                </Layer>
                 <Layer style={{ margin: "5px" }}>
                   <TableToolbarSearch
                     expanded

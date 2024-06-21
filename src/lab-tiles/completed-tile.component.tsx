@@ -3,13 +3,13 @@ import { useTranslation } from "react-i18next";
 import SummaryTile from "../summary-tiles/summary-tile.component";
 import { useLabTestsStats } from "../summary-tiles/laboratory-summary.resource";
 import dayjs from "dayjs";
+import { useOrderDate } from "../utils/functions";
 
 const ApprovedTileComponent = () => {
   const { t } = useTranslation();
 
-  const today = dayjs(new Date()).format("YYYY-MM-DD");
-
-  const { data } = useLabTestsStats("COMPLETED", today);
+  const { currentOrdersDate } = useOrderDate();
+  const { data } = useLabTestsStats("COMPLETED", currentOrdersDate);
 
   return (
     <SummaryTile

@@ -28,8 +28,8 @@ import {
 
 import styles from "./review-list.scss";
 import { Add } from "@carbon/react/icons";
-import { getStatusColor } from "../utils/functions";
-import dayjs from "dayjs";
+import { getStatusColor, useOrderDate } from "../utils/functions";
+import { REFERINSTRUCTIONS } from "../constants";
 
 interface ReviewlistProps {
   fulfillerStatus: string;
@@ -67,19 +67,17 @@ const ApproveTestMenu: React.FC<ApproveResultMenuProps> = ({
 const ReviewList: React.FC<ReviewlistProps> = ({ fulfillerStatus }) => {
   const { t } = useTranslation();
 
-  const fromDate = dayjs(new Date()).format("YYYY-MM-DD");
-
+  const { currentOrdersDate } = useOrderDate();
   const { data: reviewOrderEntries, isLoading } = useGetOrdersWorklist(
     fulfillerStatus,
-    fromDate,
-    ""
+    currentOrdersDate
   );
 
   const filtered = reviewOrderEntries?.filter(
     (item) =>
       item?.fulfillerStatus === "IN_PROGRESS" &&
       item?.dateStopped !== null &&
-      (item?.instructions !== "REFER TO cphl" ||
+      (item?.instructions !== REFERINSTRUCTIONS ||
         item?.instructions === null ||
         item?.instructions === undefined)
   );

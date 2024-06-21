@@ -13,16 +13,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  TabPanel,
   TableToolbar,
   TableToolbarContent,
   TableToolbarSearch,
   Layer,
-  Tag,
   Button,
   Tile,
-  DatePicker,
-  DatePickerInput,
 } from "@carbon/react";
 import { Result, useGetOrdersWorklist } from "./work-list.resource";
 import styles from "./work-list.scss";
@@ -35,8 +31,8 @@ import {
 } from "@openmrs/esm-framework";
 import { launchOverlay } from "../components/overlay/hook";
 import ResultForm from "../results/result-form.component";
-import { getStatusColor } from "../utils/functions";
-import dayjs from "dayjs";
+import { getStatusColor, useOrderDate } from "../utils/functions";
+import { REFERINSTRUCTIONS } from "../constants";
 
 interface WorklistProps {
   fulfillerStatus: string;
@@ -54,12 +50,11 @@ interface RejectOrderProps {
 const WorkList: React.FC<WorklistProps> = ({ fulfillerStatus }) => {
   const { t } = useTranslation();
 
-  const fromDate = dayjs(new Date()).format("YYYY-MM-DD");
+  const { currentOrdersDate } = useOrderDate();
 
   const { data: pickedOrderEntries, isLoading } = useGetOrdersWorklist(
     fulfillerStatus,
-    fromDate,
-    ""
+    currentOrdersDate
   );
 
   const pageSizes = [10, 20, 30, 40, 50];
@@ -69,7 +64,8 @@ const WorkList: React.FC<WorklistProps> = ({ fulfillerStatus }) => {
     (item) =>
       item?.fulfillerStatus === "IN_PROGRESS" &&
       item?.accessionNumber !== null &&
-      item?.dateStopped === null
+      item.dateStopped === null &&
+      item.instructions !== REFERINSTRUCTIONS
   );
 
   const {

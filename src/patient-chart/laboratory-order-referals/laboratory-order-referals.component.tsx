@@ -61,6 +61,7 @@ import {
   launchPatientWorkspace,
 } from "@openmrs/esm-patient-common-lib";
 import { mutate } from "swr";
+import { REFERINSTRUCTIONS } from "../../constants";
 
 interface LaboratoryOrderReferalResultsProps {
   patientUuid: string;
@@ -117,7 +118,7 @@ const LaboratoryOrderReferalResults: React.FC<
             item?.encounterType?.uuid === artCardEncounterTypeUuid) &&
           item?.orders?.filter(
             (order) =>
-              order?.instructions === "REFER TO cphl" ||
+              order?.instructions === REFERINSTRUCTIONS ||
               order.orderType === laboratoryOrderTypeUuid
           )
       )
