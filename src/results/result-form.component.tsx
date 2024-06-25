@@ -121,7 +121,7 @@ const ResultForm: React.FC<ResultFormProps> = ({ order, patientUuid }) => {
       encounter: order.encounter.uuid,
       patient: order.patient.uuid,
       concept: order.concept.uuid,
-      orderer: order.orderer,
+      orderer: order.orderer.uuid,
     };
 
     UpdateOrderResult(

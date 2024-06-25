@@ -102,14 +102,22 @@ const LaboratoryActiveTestOrderResults: React.FC<
 
   const sortedLabRequests = useMemo(() => {
     return [...items]
-      ?.filter(
-        (item) =>
-          (item?.encounterType?.uuid === laboratoryEncounterTypeUuid ||
-            item?.encounterType?.uuid === artCardEncounterTypeUuid) &&
-          item.orders.filter(
-            (order) => order.orderType === laboratoryOrderTypeUuid
-          )
-      )
+      ?.filter((item) => {
+        const { encounterType, orders } = item || {};
+        const { uuid: encounterTypeUuid } = encounterType || {};
+
+        // Check if the encounterType UUID matches either of the specified UUIDs
+        const isMatchingEncounterType =
+          encounterTypeUuid === laboratoryEncounterTypeUuid ||
+          encounterTypeUuid === artCardEncounterTypeUuid;
+
+        // Check if any order has a matching orderType UUID
+        const hasMatchingOrder = orders?.some(
+          ({ orderType }) => orderType?.uuid === laboratoryOrderTypeUuid
+        );
+
+        return isMatchingEncounterType && hasMatchingOrder;
+      })
       ?.sort((a, b) => {
         const dateA = new Date(a.encounterDatetime);
         const dateB = new Date(b.encounterDatetime);
