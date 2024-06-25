@@ -453,17 +453,20 @@ export function usePatientLaboratoryOrders(filter: LaboratoryOrderFilter) {
     Error
   >(apiUrl, openmrsFetch, { refreshInterval: 3000 });
 
+  const filteredItems = data?.data?.results
+    ? data.data.results
+        .map((item) => ({
+          ...item,
+          orders: item.orders.filter(
+            (order) =>
+              order?.orderType?.uuid !== "131168f4-15f5-102d-96e4-000c29c2a5d7"
+          ),
+        }))
+        .filter((item) => item.orders.length > 0)
+    : [];
+
   return {
-    items: data?.data
-      ? data?.data?.results.filter(
-          (item) =>
-            item?.orders.length !== 0 &&
-            item.orders.filter(
-              (item) =>
-                item?.orderType?.uuid !== "131168f4-15f5-102d-96e4-000c29c2a5d7"
-            )
-        )
-      : [],
+    items: filteredItems,
     isLoading,
     isError: error,
   };
