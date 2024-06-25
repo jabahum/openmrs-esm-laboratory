@@ -108,7 +108,9 @@ const LaboratoryPastTestOrderResults: React.FC<
 
         // Filter orders to only include those with the matching orderType UUID
         const matchingOrders = orders?.filter(
-          ({ orderType }) => orderType?.uuid === laboratoryOrderTypeUuid
+          ({ orderType }) =>
+            orderType?.uuid === laboratoryOrderTypeUuid &&
+            orderType.uuid !== "131168f4-15f5-102d-96e4-000c29c2a5d7"
         );
 
         // Return the item only if it has matching encounterType and at least one matching order
