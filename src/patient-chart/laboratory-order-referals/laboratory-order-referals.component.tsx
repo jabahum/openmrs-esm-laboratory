@@ -292,7 +292,8 @@ const LaboratoryOrderReferalResults: React.FC<
               (order?.action === "NEW" ||
                 order?.action === "REVISE" ||
                 order?.action === "DISCONTINUE") &&
-              order.dateStopped === null
+              order.dateStopped === null &&
+              order.instructions === REFERINSTRUCTIONS
             ) {
               return (
                 <Tag
