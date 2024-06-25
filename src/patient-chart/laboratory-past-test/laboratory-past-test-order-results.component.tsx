@@ -106,12 +106,13 @@ const LaboratoryPastTestOrderResults: React.FC<
           encounterTypeUuid === laboratoryEncounterTypeUuid ||
           encounterTypeUuid === artCardEncounterTypeUuid;
 
-        // Check if any order has a matching orderType UUID
-        const hasMatchingOrder = orders?.some(
+        // Filter orders to only include those with the matching orderType UUID
+        const matchingOrders = orders?.filter(
           ({ orderType }) => orderType?.uuid === laboratoryOrderTypeUuid
         );
 
-        return isMatchingEncounterType && hasMatchingOrder;
+        // Return the item only if it has matching encounterType and at least one matching order
+        return isMatchingEncounterType && matchingOrders?.length > 0;
       })
       ?.sort((a, b) => {
         const dateA = new Date(a.encounterDatetime);
