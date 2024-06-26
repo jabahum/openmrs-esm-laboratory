@@ -117,32 +117,21 @@ const LaboratoryOrderReferalResults: React.FC<
         const { uuid: encounterTypeUuid } = encounterType || {};
 
         // Check if the encounterType UUID matches either of the specified UUIDs
-        const isMatchingEncounterType =
-          encounterTypeUuid === laboratoryEncounterTypeUuid ||
-          encounterTypeUuid === artCardEncounterTypeUuid;
 
         // Filter orders to only include those with the matching orderType UUID
         const matchingOrders = orders?.filter(
-          (order) =>
-            order?.orderType?.uuid === laboratoryOrderTypeUuid &&
-            order?.orderType?.uuid !== "131168f4-15f5-102d-96e4-000c29c2a5d7" &&
-            order?.instructions === REFERINSTRUCTIONS
+          (order) => order?.instructions === REFERINSTRUCTIONS
         );
 
         // Return the item only if it has matching encounterType and at least one matching order
-        return isMatchingEncounterType && matchingOrders?.length > 0;
+        return matchingOrders?.length > 0;
       })
       ?.sort((a, b) => {
         const dateA = new Date(a.encounterDatetime);
         const dateB = new Date(b.encounterDatetime);
         return dateB.getTime() - dateA.getTime();
       });
-  }, [
-    artCardEncounterTypeUuid,
-    items,
-    laboratoryEncounterTypeUuid,
-    laboratoryOrderTypeUuid,
-  ]);
+  }, [items]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [laboratoryOrders, setLaboratoryOrders] = useState(sortedLabRequests);
@@ -277,6 +266,8 @@ const LaboratoryOrderReferalResults: React.FC<
     [t]
   );
 
+  console.log("laboratoryOrders" + JSON.stringify(laboratoryOrders, null, 2));
+
   const tableRows = useMemo(() => {
     return laboratoryOrders?.map((entry, index) => ({
       ...entry,
@@ -292,7 +283,6 @@ const LaboratoryOrderReferalResults: React.FC<
               (order?.action === "NEW" ||
                 order?.action === "REVISE" ||
                 order?.action === "DISCONTINUE") &&
-              order.dateStopped === null &&
               order.instructions === REFERINSTRUCTIONS
             ) {
               return (
@@ -301,7 +291,7 @@ const LaboratoryOrderReferalResults: React.FC<
                   role="tooltip"
                   key={order?.uuid}
                 >
-                  {order?.display}
+                  {order?.concept?.display ?? "Not"}
                 </Tag>
               );
             }

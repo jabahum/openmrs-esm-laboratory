@@ -21,7 +21,7 @@ import { Renew } from "@carbon/react/icons";
 import {
   GenerateSpecimenId,
   UpdateOrder,
-  extractCapitalLetters,
+  extractLetters,
   useReferralLocations,
   useSpecimenTypes,
 } from "./add-to-worklist-dialog.resource";
@@ -69,7 +69,7 @@ const AddToWorklistDialog: React.FC<AddToWorklistDialogProps> = ({
       specimenSourceId: specimenType,
       unProcessedOrders: "",
       patientQueueId: queueId,
-      referenceLab: extractCapitalLetters(selectedReferral).toLowerCase(),
+      referenceLab: preferred ? extractLetters(selectedReferral) : "",
     };
 
     UpdateOrder(order.uuid, body).then(
@@ -142,7 +142,7 @@ const AddToWorklistDialog: React.FC<AddToWorklistDialogProps> = ({
       <Form onSubmit={pickLabRequestQueue}>
         <ModalHeader
           closeModal={closeModal}
-          title={t("pickRequest", `Test : ${order?.display}`)}
+          title={t("pickRequest", `Test : ${order?.concept?.display}`)}
         />
         <ModalBody>
           <div className={styles.modalBody}>
