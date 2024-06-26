@@ -334,7 +334,7 @@ export interface Order {
   orderReasonNonCoded: any;
   orderType: OrderType;
   urgency: string;
-  instructions: any;
+  instructions: string;
   commentToFulfiller: any;
   display: string;
   specimenSource: any;
@@ -445,13 +445,13 @@ export function toQueryParams<T extends ResourceFilterCriteria>(
 
 export function usePatientLaboratoryOrders(filter: LaboratoryOrderFilter) {
   const config = useConfig();
-  const { laboratoryEncounterTypeUuid } = config;
+  const { laboratoryEncounterTypeUuid, laboratoryOrderTypeUuid } = config;
 
   const apiUrl = `${restBaseUrl}/encounter?patient=${filter.patientUuid}&encounterType=${laboratoryEncounterTypeUuid}&v=${filter.v}&totalCount=true`;
   const { data, error, isLoading } = useSWR<
     { data: LaboratoryResponse },
     Error
-  >(apiUrl, openmrsFetch, { refreshInterval: 3000 });
+  >(apiUrl, openmrsFetch);
 
   const filteredItems = data?.data?.results
     ? data.data.results
@@ -459,7 +459,9 @@ export function usePatientLaboratoryOrders(filter: LaboratoryOrderFilter) {
           ...item,
           orders: item.orders.filter(
             (order) =>
-              order?.orderType?.uuid !== "131168f4-15f5-102d-96e4-000c29c2a5d7"
+              order?.orderType?.uuid !==
+                "131168f4-15f5-102d-96e4-000c29c2a5d7" &&
+              order.orderType?.uuid === laboratoryOrderTypeUuid
           ),
         }))
         .filter((item) => item.orders.length > 0)

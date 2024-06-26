@@ -184,14 +184,23 @@ export async function GetOrderByUuid(uuid: string) {
   });
 }
 
-export function extractCapitalLetters(statement: string): string {
+export function extractLetters(
+  statement: string,
+  extractUppercase: boolean = true
+): string {
   const words = statement.split(" ");
   let result = "";
 
   for (const word of words) {
     for (const char of word) {
-      if (char >= "A" && char <= "Z") {
-        result += char;
+      if (extractUppercase) {
+        if (char >= "A" && char <= "Z") {
+          result += char;
+        }
+      } else {
+        if (char >= "a" && char <= "z") {
+          result += char;
+        }
       }
     }
   }

@@ -74,12 +74,8 @@ const LaboratoryPastTestOrderResults: React.FC<
 > = ({ patientUuid }) => {
   const { t } = useTranslation();
 
-  const {
-    enableSendingLabTestsByEmail,
-    laboratoryEncounterTypeUuid,
-    artCardEncounterTypeUuid,
-    laboratoryOrderTypeUuid,
-  } = useConfig();
+  const { enableSendingLabTestsByEmail, laboratoryEncounterTypeUuid } =
+    useConfig();
 
   const displayText = t(
     "pastLaboratoryTestsDisplayTextTitle",
@@ -96,37 +92,12 @@ const LaboratoryPastTestOrderResults: React.FC<
   const [currentPageSize, setPageSize] = useState(10);
 
   const sortedLabRequests = useMemo(() => {
-    return [...items]
-      ?.filter((item) => {
-        const { encounterType, orders } = item || {};
-        const { uuid: encounterTypeUuid } = encounterType || {};
-
-        // Check if the encounterType UUID matches either of the specified UUIDs
-        const isMatchingEncounterType =
-          encounterTypeUuid === laboratoryEncounterTypeUuid ||
-          encounterTypeUuid === artCardEncounterTypeUuid;
-
-        // Filter orders to only include those with the matching orderType UUID
-        const matchingOrders = orders?.filter(
-          ({ orderType }) =>
-            orderType?.uuid === laboratoryOrderTypeUuid &&
-            orderType.uuid !== "131168f4-15f5-102d-96e4-000c29c2a5d7"
-        );
-
-        // Return the item only if it has matching encounterType and at least one matching order
-        return isMatchingEncounterType && matchingOrders?.length > 0;
-      })
-      ?.sort((a, b) => {
-        const dateA = new Date(a.encounterDatetime);
-        const dateB = new Date(b.encounterDatetime);
-        return dateB.getTime() - dateA.getTime();
-      });
-  }, [
-    artCardEncounterTypeUuid,
-    items,
-    laboratoryEncounterTypeUuid,
-    laboratoryOrderTypeUuid,
-  ]);
+    return [...items]?.sort((a, b) => {
+      const dateA = new Date(a.encounterDatetime);
+      const dateB = new Date(b.encounterDatetime);
+      return dateB.getTime() - dateA.getTime();
+    });
+  }, [items]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [laboratoryOrders, setLaboratoryOrders] = useState(sortedLabRequests);

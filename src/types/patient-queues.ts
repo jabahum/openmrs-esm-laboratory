@@ -1,3 +1,5 @@
+import { Concept } from "../work-list/work-list.resource";
+
 export interface PatientQueue {
   uuid: string;
   creator: {
@@ -174,6 +176,7 @@ export interface Order {
   display: string;
   links: Link[];
   type: string;
+  concept: Concept;
 }
 
 export interface Visit {
