@@ -23,14 +23,23 @@ import {
   TableToolbarSearch,
   Layer,
   Tile,
+  DatePicker,
+  DatePickerInput,
 } from "@carbon/react";
-import { getStatusColor } from "../utils/functions";
+import { getStatusColor, useOrderDate } from "../utils/functions";
 import styles from "./referred-orders.scss";
+import dayjs from "dayjs";
+import { REFERINSTRUCTIONS } from "../constants";
 
 const ReferredOrdersList: React.FC = () => {
   const { t } = useTranslation();
 
-  const { data: referredOrderList, isLoading } = useGetOrdersWorklist("");
+  const { currentOrdersDate } = useOrderDate();
+
+  const { data: referredOrderList, isLoading } = useGetOrdersWorklist(
+    "",
+    currentOrdersDate
+  );
 
   const pageSizes = [10, 20, 30, 40, 50];
   const [currentPageSize, setPageSize] = useState(10);
@@ -39,8 +48,7 @@ const ReferredOrdersList: React.FC = () => {
     (item) =>
       item?.fulfillerStatus === "IN_PROGRESS" &&
       item?.accessionNumber !== null &&
-      item?.dateStopped === null &&
-      item?.instructions === "REFER TO cphl"
+      item?.instructions === REFERINSTRUCTIONS
   );
 
   const {
@@ -85,7 +93,7 @@ const ReferredOrdersList: React.FC = () => {
             item?.identifierType?.uuid ===
             "e1731641-30ab-102d-86b0-7a5022ba4115"
         )
-        .display.split("=")[1]
+        ?.display.split("=")[1]
         .trim(),
       orderNumber: entry?.orderNumber,
       accessionNumber: entry?.accessionNumber,
@@ -127,7 +135,7 @@ const ReferredOrdersList: React.FC = () => {
               }}
             >
               <TableToolbarContent>
-                <Layer>
+                <Layer style={{ margin: "5px" }}>
                   <TableToolbarSearch
                     expanded
                     onChange={onInputChange}

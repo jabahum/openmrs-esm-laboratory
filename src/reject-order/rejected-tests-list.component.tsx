@@ -21,11 +21,16 @@ import { useTranslation } from "react-i18next";
 import { formatDate, parseDate, usePagination } from "@openmrs/esm-framework";
 import styles from "../tests-ordered/laboratory-queue.scss";
 import { useGetOrdersWorklist } from "../work-list/work-list.resource";
+import { useOrderDate } from "../utils/functions";
 
 const RejectedTestsList: React.FC = () => {
   const { t } = useTranslation();
 
-  const { data: pickedOrderList, isLoading } = useGetOrdersWorklist("");
+  const { currentOrdersDate } = useOrderDate();
+  const { data: pickedOrderList, isLoading } = useGetOrdersWorklist(
+    "",
+    currentOrdersDate
+  );
 
   const data = pickedOrderList.filter(
     (item) => item?.fulfillerStatus === "DECLINED"

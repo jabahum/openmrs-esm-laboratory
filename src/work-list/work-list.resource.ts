@@ -55,6 +55,7 @@ export interface Concept {
 }
 
 export interface Orderer {
+  uuid: string;
   display: string;
 }
 
@@ -83,17 +84,17 @@ export interface IdentifierType {
   uuid: string;
 }
 
-export function useGetOrdersWorklist(fulfillerStatus: string, date?: string) {
+export function useGetOrdersWorklist(fulfillerStatus: string, dateTo?: string) {
   const { laboratoryOrderTypeUuid } = useConfig();
   const customRepresentation =
-    "v=custom:(uuid,orderNumber,accessionNumber,instructions,careSetting:(uuid),encounter:(uuid,obs:(order:(uuid,display,patient:(uuid,display)))),fulfillerComment,orderType:(display),concept:(display,uuid),action,dateStopped,fulfillerStatus,dateActivated,orderer:(display),urgency,patient:(uuid,names:(display),display,gender,birthdate,identifiers:(voided,preferred,uuid,display,identifierType:(uuid))))";
+    "v=custom:(uuid,orderNumber,accessionNumber,instructions,careSetting:(uuid),encounter:(uuid,obs:(order:(uuid,display,patient:(uuid,display)))),fulfillerComment,orderType:(display),concept:(display,uuid),action,dateStopped,fulfillerStatus,dateActivated,orderer:(uuid,display),urgency,patient:(uuid,names:(display),display,gender,birthdate,identifiers:(voided,preferred,uuid,display,identifierType:(uuid))))";
   const orderTypeQuery =
     laboratoryOrderTypeUuid !== ""
       ? `orderTypes=${laboratoryOrderTypeUuid}`
       : "";
   let apiUrl = `${restBaseUrl}/order?${orderTypeQuery}&fulfillerStatus=${fulfillerStatus}&${customRepresentation}`;
-  if (date) {
-    apiUrl += `&activatedOnOrAfterDate=${date}`;
+  if (dateTo) {
+    apiUrl += `&activatedOnOrAfterDate=${dateTo}`;
   }
 
   const mutateOrders = useCallback(

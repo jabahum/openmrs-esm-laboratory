@@ -1,13 +1,14 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import SummaryTile from "../summary-tiles/summary-tile.component";
-import dayjs from "dayjs";
 import { useGetOrdersWorklist } from "../work-list/work-list.resource";
+import { useOrderDate } from "../utils/functions";
 
 const TestsOrderedTileComponent = () => {
   const { t } = useTranslation();
-  const today = dayjs(new Date()).format("YYYY-MM-DD");
-  const { data } = useGetOrdersWorklist("", today);
+
+  const { currentOrdersDate } = useOrderDate();
+  const { data } = useGetOrdersWorklist("", currentOrdersDate);
 
   const filteredData = data?.filter(
     (item) =>

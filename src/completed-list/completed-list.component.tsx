@@ -25,8 +25,7 @@ import {
   DataTableSkeleton,
 } from "@carbon/react";
 import styles from "./completed-list.scss";
-import { getStatusColor } from "../utils/functions";
-import dayjs from "dayjs";
+import { getStatusColor, useOrderDate } from "../utils/functions";
 
 interface CompletedListProps {
   fulfillerStatus: string;
@@ -35,11 +34,11 @@ interface CompletedListProps {
 const CompletedList: React.FC<CompletedListProps> = ({ fulfillerStatus }) => {
   const { t } = useTranslation();
 
-  const today = dayjs(new Date()).format("YYYY-MM-DD");
+  const { currentOrdersDate } = useOrderDate();
 
   const { data: completedOrderList, isLoading } = useGetOrdersWorklist(
     fulfillerStatus,
-    today
+    currentOrdersDate
   );
 
   const pageSizes = [10, 20, 30, 40, 50];
