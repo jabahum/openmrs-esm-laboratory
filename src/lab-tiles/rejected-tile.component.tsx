@@ -3,29 +3,25 @@ import { useTranslation } from "react-i18next";
 import SummaryTile from "../summary-tiles/summary-tile.component";
 import { useLabTestsStats } from "../summary-tiles/laboratory-summary.resource";
 import { useOrderDate } from "../utils/functions";
-import { REFERINSTRUCTIONS } from "../constants";
 
-const WorklistTileComponent = () => {
+const RejectedTileComponent = () => {
   const { t } = useTranslation();
+
   const { currentOrdersDate } = useOrderDate();
 
-  const { data } = useLabTestsStats("IN_PROGRESS", currentOrdersDate);
+  const { data } = useLabTestsStats("", currentOrdersDate);
 
   const filteredData = data?.filter(
-    (item) =>
-      item?.fulfillerStatus === "IN_PROGRESS" &&
-      item?.accessionNumber !== null &&
-      item?.dateStopped === null &&
-      item?.instructions !== REFERINSTRUCTIONS
+    (item) => item?.fulfillerStatus === "DECLINED"
   );
 
   return (
     <SummaryTile
-      label={t("inProgress", "In progress")}
+      label={t("orders", "Tests")}
       value={filteredData?.length}
-      headerLabel={t("worklist", "Ex-Worklist")}
+      headerLabel={t("testsRejected", "Rejected")}
     />
   );
 };
 
-export default WorklistTileComponent;
+export default RejectedTileComponent;

@@ -1,8 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useGetOrdersWorklist } from "../work-list/work-list.resource";
+import { Result, useGetOrdersWorklist } from "../work-list/work-list.resource";
 import {
-  ErrorState,
   formatDate,
   parseDate,
   showModal,
@@ -24,33 +23,34 @@ import {
   TableToolbarSearch,
   Layer,
   Tile,
-  DatePicker,
-  DatePickerInput,
   Button,
-  Tag,
 } from "@carbon/react";
 
 import styles from "./review-list.scss";
 import { Add } from "@carbon/react/icons";
-import { getStatusColor } from "../utils/functions";
+import { getStatusColor, useOrderDate } from "../utils/functions";
+import { REFERINSTRUCTIONS } from "../constants";
 
 interface ReviewlistProps {
   fulfillerStatus: string;
 }
 interface ApproveResultMenuProps {
   encounterUuid: string;
+  orderItem: Result;
 }
 
 const ApproveTestMenu: React.FC<ApproveResultMenuProps> = ({
   encounterUuid,
+  orderItem,
 }) => {
   const { t } = useTranslation();
   const launchReviewItemModal = useCallback(() => {
     const dispose = showModal("review-item-dialog", {
       encounterUuid,
+      orderItem,
       closeModal: () => dispose(),
     });
-  }, [encounterUuid]);
+  }, [encounterUuid, orderItem]);
 
   return (
     <Button
@@ -67,18 +67,29 @@ const ApproveTestMenu: React.FC<ApproveResultMenuProps> = ({
 const ReviewList: React.FC<ReviewlistProps> = ({ fulfillerStatus }) => {
   const { t } = useTranslation();
 
-  const [activatedOnOrAfterDate, setActivatedOnOrAfterDate] = useState("");
+  const { currentOrdersDate } = useOrderDate();
+  const { data: reviewOrderEntries, isLoading } = useGetOrdersWorklist(
+    fulfillerStatus,
+    currentOrdersDate
+  );
 
-  const { workListEntries, isLoading } = useGetOrdersWorklist(fulfillerStatus);
+  const filtered = reviewOrderEntries?.filter(
+    (item) =>
+      item?.fulfillerStatus === "IN_PROGRESS" &&
+      item?.dateStopped !== null &&
+      (item?.instructions !== REFERINSTRUCTIONS ||
+        item?.instructions === null ||
+        item?.instructions === undefined)
+  );
 
   const pageSizes = [10, 20, 30, 40, 50];
   const [currentPageSize, setPageSize] = useState(10);
 
   const {
     goTo,
-    results: paginatedWorkListEntries,
+    results: paginatedReviewOrderEntries,
     currentPage,
-  } = usePagination(workListEntries, currentPageSize);
+  } = usePagination(filtered, currentPageSize);
 
   // get picked orders
   let columns = [
@@ -93,46 +104,41 @@ const ReviewList: React.FC<ReviewlistProps> = ({ fulfillerStatus }) => {
       key: "accessionNumber",
     },
     { id: 4, header: t("test", "Test"), key: "test" },
-    { id: 5, header: t("action", "Action"), key: "action" },
-    { id: 6, header: t("status", "Status"), key: "status" },
-    { id: 8, header: t("orderer", "Orderer"), key: "orderer" },
-    { id: 9, header: t("urgency", "Urgency"), key: "urgency" },
+    { id: 5, header: t("status", "Status"), key: "status" },
+    { id: 6, header: t("orderer", "Ordered By"), key: "orderer" },
+    { id: 7, header: t("urgency", "Urgency"), key: "urgency" },
   ];
 
   const tableRows = useMemo(() => {
-    return paginatedWorkListEntries
-      ?.filter(
-        (item) =>
-          (item.action === "DISCONTINUE" || item.action === "REVISE") &&
-          item.fulfillerStatus === "IN_PROGRESS"
-      )
-      .map((entry) => ({
-        ...entry,
-        id: entry?.uuid,
-        date: formatDate(parseDate(entry?.dateActivated)),
-        patient: entry?.patient?.display.split("-")[1],
-        orderNumber: entry?.orderNumber,
-        accessionNumber: entry?.accessionNumber,
-        test: entry?.concept?.display,
-        action: entry?.action,
-        status: (
-          <span
-            className={styles.statusContainer}
-            style={{ color: `${getStatusColor(entry?.fulfillerStatus)}` }}
-          >
-            {entry?.fulfillerStatus}
-          </span>
-        ),
-        orderer: entry?.orderer?.display,
-        orderType: entry?.orderType?.display,
-        urgency: entry?.urgency,
-      }));
-  }, [paginatedWorkListEntries]);
+    return paginatedReviewOrderEntries.map((entry) => ({
+      ...entry,
+      id: entry?.uuid,
+      date: formatDate(parseDate(entry?.dateActivated)),
+      patient: entry?.patient?.display.split("-")[1],
+      orderNumber: entry?.orderNumber,
+      accessionNumber: entry?.accessionNumber,
+      test: entry?.concept?.display,
+      action: entry?.action,
+      status: (
+        <span
+          className={styles.statusContainer}
+          style={{ color: `${getStatusColor(entry?.fulfillerStatus)}` }}
+        >
+          {entry?.fulfillerStatus === "IN_PROGRESS"
+            ? "IN_REVIEW"
+            : entry?.fulfillerStatus}
+        </span>
+      ),
+      orderer: entry?.orderer?.display,
+      orderType: entry?.orderType?.display,
+      urgency: entry?.urgency,
+    }));
+  }, [paginatedReviewOrderEntries]);
 
   if (isLoading) {
     return <DataTableSkeleton role="progressbar" />;
   }
-  if (paginatedWorkListEntries?.length >= 0) {
+  if (paginatedReviewOrderEntries?.length >= 0) {
     return (
       <DataTable rows={tableRows} headers={columns} useZebraStyles>
         {({
@@ -182,8 +188,10 @@ const ReviewList: React.FC<ReviewlistProps> = ({ fulfillerStatus }) => {
                         ))}
                         <TableCell className="cds--table-column-menu">
                           <ApproveTestMenu
+                            orderItem={paginatedReviewOrderEntries[index]}
                             encounterUuid={
-                              paginatedWorkListEntries[index]?.encounter?.uuid
+                              paginatedReviewOrderEntries[index]?.encounter
+                                ?.uuid
                             }
                           />
                         </TableCell>
@@ -210,7 +218,7 @@ const ReviewList: React.FC<ReviewlistProps> = ({ fulfillerStatus }) => {
               page={currentPage}
               pageSize={currentPageSize}
               pageSizes={pageSizes}
-              totalItems={workListEntries?.length}
+              totalItems={filtered?.length}
               className={styles.pagination}
               onChange={({ pageSize, page }) => {
                 if (pageSize !== currentPageSize) {

@@ -8,7 +8,6 @@ import {
 } from "@openmrs/esm-framework";
 
 import { Result } from "../work-list/work-list.resource";
-import { useCallback } from "react";
 
 export function useMetrics() {
   const metrics = {
@@ -42,36 +41,28 @@ export function useServices() {
 }
 
 // worklist
-export function useLabTestsStats(fulfillerStatus: string) {
+export function useLabTestsStats(fulfillerStatus: string, date?: string) {
   const { laboratoryOrderTypeUuid } = useConfig();
 
   const orderTypeQuery =
     laboratoryOrderTypeUuid !== ""
-      ? `orderType=${laboratoryOrderTypeUuid}&`
+      ? `orderTypes=${laboratoryOrderTypeUuid}`
       : "";
 
-  const apiUrl = `${restBaseUrl}/order?${orderTypeQuery}fulfillerStatus=${fulfillerStatus}&v=full`;
+  let apiUrl = `${restBaseUrl}/order?${orderTypeQuery}&fulfillerStatus=${fulfillerStatus}&v=full`;
 
-  const mutateOrders = useCallback(
-    () =>
-      mutate(
-        (key) =>
-          typeof key === "string" &&
-          key.startsWith(
-            `/ws/rest/v1/order?orderType=${laboratoryOrderTypeUuid}`
-          )
-      ),
-    [laboratoryOrderTypeUuid]
-  );
+  if (date) {
+    apiUrl += `&activatedOnOrAfterDate=${date}`;
+  }
 
-  const { data, error, isLoading } = useSWR<
+  const { data, error, isLoading, mutate } = useSWR<
     { data: { results: Array<Result> } },
     Error
-  >(apiUrl, openmrsFetch);
+  >(apiUrl, openmrsFetch, { refreshInterval: 3000 });
   return {
-    count: data?.data ? data.data.results.length : 0,
+    data: data?.data ? data?.data?.results : [],
     isLoading,
     isError: error,
-    mutate: mutateOrders,
+    mutate,
   };
 }

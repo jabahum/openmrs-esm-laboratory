@@ -1,5 +1,12 @@
-import { openmrsFetch, restBaseUrl } from "@openmrs/esm-framework";
+import {
+  getGlobalStore,
+  openmrsFetch,
+  restBaseUrl,
+} from "@openmrs/esm-framework";
+import dayjs from "dayjs";
 import useSWR from "swr";
+import { omrsDateFormat } from "../constants";
+import { useEffect, useState } from "react";
 
 export const trimVisitNumber = (visitNumber: string) => {
   if (!visitNumber) {
@@ -48,6 +55,7 @@ export const getStatusColor = (fulfillerStatus: string) => {
     return "red";
   }
 };
+
 export interface PatientResource {
   uuid: string;
   display: string;
@@ -244,3 +252,76 @@ export function useGetPatientByUuid(uuid: string) {
     isError: error,
   };
 }
+
+export function OrderTagStyle(order: any) {
+  switch (order?.action) {
+    case "NEW" || "REVISE":
+      return {
+        background: "#6F6F6F",
+        color: "white",
+      };
+
+    case "DISCONTINUE":
+      return {
+        background: "green",
+        color: "white",
+      };
+
+    case "DECLINED" || "EXCEPTION":
+      return {
+        background: "red",
+        color: "white",
+      };
+
+    default:
+      return {
+        background: "gray",
+        color: "white",
+      };
+  }
+}
+
+export function extractErrorMessagesFromResponse(errorObject) {
+  const fieldErrors = errorObject?.responseBody?.error?.fieldErrors;
+  if (!fieldErrors) {
+    return [errorObject?.responseBody?.error?.message ?? errorObject?.message];
+  }
+  return Object.values(fieldErrors).flatMap((errors: Array<Error>) =>
+    errors.map((error) => error.message)
+  );
+}
+
+// orders date globally
+const initialState = {
+  ordersDate: dayjs(new Date().setHours(0, 0, 0, 0)).format(omrsDateFormat),
+};
+
+export function getStartDate() {
+  return getGlobalStore<{ ordersDate: string | Date }>(
+    "ordersStartDate",
+    initialState
+  );
+}
+
+export function changeStartDate(updatedDate: string | Date) {
+  const store = getStartDate();
+  store.setState({
+    ordersDate: dayjs(new Date(updatedDate).setHours(0, 0, 0, 0)).format(
+      omrsDateFormat
+    ),
+  });
+}
+
+export const useOrderDate = () => {
+  const [currentOrdersDate, setCurrentOrdersDate] = useState(
+    initialState.ordersDate
+  );
+
+  useEffect(() => {
+    getStartDate().subscribe(({ ordersDate }) =>
+      setCurrentOrdersDate(ordersDate.toString())
+    );
+  }, []);
+
+  return { currentOrdersDate, setCurrentOrdersDate };
+};

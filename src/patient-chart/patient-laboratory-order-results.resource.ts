@@ -1,9 +1,4 @@
-import {
-  formatDate,
-  openmrsFetch,
-  restBaseUrl,
-  useConfig,
-} from "@openmrs/esm-framework";
+import { openmrsFetch, restBaseUrl, useConfig } from "@openmrs/esm-framework";
 import useSWR from "swr";
 
 export interface LaboratoryResponse {
@@ -339,7 +334,7 @@ export interface Order {
   orderReasonNonCoded: any;
   orderType: OrderType;
   urgency: string;
-  instructions: any;
+  instructions: string;
   commentToFulfiller: any;
   display: string;
   specimenSource: any;
@@ -401,20 +396,6 @@ export interface OrderType {
   resourceVersion: string;
 }
 
-export const getOrderColor = (activated: string, stopped: string) => {
-  const numAct = formatWaitTime(activated);
-  let testStopped: Number;
-  if (stopped === null) {
-    testStopped = 0;
-  }
-
-  if (numAct >= 0 && testStopped === 0) {
-    return "#6F6F6F"; // #6F6F6F
-  } else {
-    return "green"; // green
-  }
-};
-
 export const formatWaitTime = (waitTime: string) => {
   const num = parseInt(waitTime);
   const hours = num / 60;
@@ -464,16 +445,30 @@ export function toQueryParams<T extends ResourceFilterCriteria>(
 
 export function usePatientLaboratoryOrders(filter: LaboratoryOrderFilter) {
   const config = useConfig();
-  const { laboratoryEncounterTypeUuid } = config;
+  const { laboratoryEncounterTypeUuid, laboratoryOrderTypeUuid } = config;
 
   const apiUrl = `${restBaseUrl}/encounter?patient=${filter.patientUuid}&encounterType=${laboratoryEncounterTypeUuid}&v=${filter.v}&totalCount=true`;
   const { data, error, isLoading } = useSWR<
     { data: LaboratoryResponse },
     Error
-  >(apiUrl, openmrsFetch, { refreshInterval: 3000 });
+  >(apiUrl, openmrsFetch);
+
+  const filteredItems = data?.data?.results
+    ? data.data.results
+        .map((item) => ({
+          ...item,
+          orders: item.orders.filter(
+            (order) =>
+              order?.orderType?.uuid !==
+                "131168f4-15f5-102d-96e4-000c29c2a5d7" &&
+              order.orderType?.uuid === laboratoryOrderTypeUuid
+          ),
+        }))
+        .filter((item) => item.orders.length > 0)
+    : [];
 
   return {
-    items: data?.data ? data?.data?.results : [],
+    items: filteredItems,
     isLoading,
     isError: error,
   };

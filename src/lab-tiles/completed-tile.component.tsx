@@ -2,19 +2,21 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import SummaryTile from "../summary-tiles/summary-tile.component";
 import { useLabTestsStats } from "../summary-tiles/laboratory-summary.resource";
+import { useOrderDate } from "../utils/functions";
 
-const ReferredTileComponent = () => {
+const ApprovedTileComponent = () => {
   const { t } = useTranslation();
 
-  const { count: completedCount } = useLabTestsStats("COMPLETED");
+  const { currentOrdersDate } = useOrderDate();
+  const { data } = useLabTestsStats("COMPLETED", currentOrdersDate);
 
   return (
     <SummaryTile
       label={t("completed", "Completed")}
-      value={completedCount}
-      headerLabel={t("results", "Results")}
+      value={data?.length}
+      headerLabel={t("approved", "Approved")}
     />
   );
 };
 
-export default ReferredTileComponent;
+export default ApprovedTileComponent;

@@ -5,127 +5,97 @@ import useSWR, { mutate } from "swr";
 export interface Result {
   uuid: string;
   orderNumber: string;
-  accessionNumber: string;
-  patient: Patient;
+  accessionNumber?: string;
+  instructions?: string;
+  careSetting: CareSetting;
+  encounter: Encounter;
+  fulfillerComment?: string;
+  orderType: OrderType;
   concept: Concept;
   action: string;
-  careSetting: CareSetting;
-  previousOrder: PreviousOrder;
-  dateActivated: string;
-  scheduledDate: any;
-  dateStopped: any;
-  autoExpireDate: any;
-  encounter: Encounter;
-  orderer: Orderer;
-  orderReason: any;
-  orderReasonNonCoded: any;
-  orderType: OrderType;
-  urgency: string;
-  instructions: any;
-  commentToFulfiller: any;
-  display: string;
-  auditInfo: AuditInfo;
+  dateStopped?: string;
   fulfillerStatus: string;
-  fulfillerComment: any;
-  specimenSource: SpecimenSource;
-  laterality: any;
-  clinicalHistory: any;
-  frequency: any;
-  numberOfRepeats: any;
-  links: Link[];
-  type: string;
-  resourceVersion: string;
+  dateActivated: string;
+  orderer: Orderer;
+  urgency: string;
+  patient: Patient2;
+}
+
+export interface CareSetting {
+  uuid: string;
+}
+
+export interface Encounter {
+  uuid: string;
+  obs: Ob[];
+}
+
+export interface Ob {
+  order?: Order;
+}
+
+export interface Order {
+  uuid: string;
+  display: string;
+  patient: Patient;
 }
 
 export interface Patient {
   uuid: string;
   display: string;
-  links: Link[];
 }
 
-export interface Link {
-  rel: string;
-  uri: string;
-  resourceAlias: string;
+export interface OrderType {
+  display: string;
 }
 
 export interface Concept {
-  uuid: string;
   display: string;
-  links: Link[];
-}
-
-export interface CareSetting {
   uuid: string;
-  name: string;
-  description: string;
-  retired: boolean;
-  careSettingType: string;
-  display: string;
-  links: Link[];
-  resourceVersion: string;
-}
-
-export interface PreviousOrder {
-  uuid: string;
-  display: string;
-  links: Link[];
-  type: string;
-}
-
-export interface Encounter {
-  uuid: string;
-  display: string;
-  links: Link[];
 }
 
 export interface Orderer {
   uuid: string;
   display: string;
-  links: Link[];
 }
 
-export interface OrderType {
+export interface Patient2 {
+  uuid: string;
+  names: Name[];
+  display: string;
+  gender: string;
+  birthdate: string;
+  identifiers: Identifier[];
+}
+
+export interface Name {
+  display: string;
+}
+
+export interface Identifier {
+  voided: boolean;
+  preferred: boolean;
   uuid: string;
   display: string;
-  name: string;
-  javaClassName: string;
-  retired: boolean;
-  description: string;
-  conceptClasses: any[];
-  parent: any;
-  links: Link[];
-  resourceVersion: string;
+  identifierType: IdentifierType;
 }
 
-export interface AuditInfo {
-  creator: Creator;
-  dateCreated: string;
-  changedBy: any;
-  dateChanged: any;
-}
-
-export interface Creator {
+export interface IdentifierType {
   uuid: string;
-  display: string;
-  links: Link[];
 }
 
-export interface SpecimenSource {
-  uuid: string;
-  display: string;
-  links: Link[];
-}
-
-export function useGetOrdersWorklist(fulfillerStatus: string) {
+export function useGetOrdersWorklist(fulfillerStatus: string, dateTo?: string) {
   const { laboratoryOrderTypeUuid } = useConfig();
-
+  const customRepresentation =
+    "v=custom:(uuid,orderNumber,accessionNumber,instructions,careSetting:(uuid),encounter:(uuid,obs:(order:(uuid,display,patient:(uuid,display)))),fulfillerComment,orderType:(display),concept:(display,uuid),action,dateStopped,fulfillerStatus,dateActivated,orderer:(uuid,display),urgency,patient:(uuid,names:(display),display,gender,birthdate,identifiers:(voided,preferred,uuid,display,identifierType:(uuid))))";
   const orderTypeQuery =
     laboratoryOrderTypeUuid !== ""
-      ? `orderType=${laboratoryOrderTypeUuid}&`
+      ? `orderTypes=${laboratoryOrderTypeUuid}`
       : "";
-
-  const apiUrl = `${restBaseUrl}/order?${orderTypeQuery}fulfillerStatus=${fulfillerStatus}&v=full`;
+  let apiUrl = `${restBaseUrl}/order?${orderTypeQuery}&fulfillerStatus=${fulfillerStatus}&${customRepresentation}`;
+  if (dateTo) {
+    apiUrl += `&activatedOnOrAfterDate=${dateTo}`;
+  }
 
   const mutateOrders = useCallback(
     () =>
@@ -133,7 +103,7 @@ export function useGetOrdersWorklist(fulfillerStatus: string) {
         (key) =>
           typeof key === "string" &&
           key.startsWith(
-            `/ws/rest/v1/order?orderType=${laboratoryOrderTypeUuid}`
+            `${restBaseUrl}/order?orderTypes=${laboratoryOrderTypeUuid}`
           )
       ),
     [laboratoryOrderTypeUuid]
@@ -145,7 +115,7 @@ export function useGetOrdersWorklist(fulfillerStatus: string) {
   >(apiUrl, openmrsFetch, { refreshInterval: 3000 });
 
   return {
-    workListEntries: data?.data ? data.data.results : [],
+    data: data?.data ? data.data.results : [],
     isLoading,
     isError: error,
     mutate: mutateOrders,
