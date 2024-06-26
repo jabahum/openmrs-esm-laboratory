@@ -467,8 +467,6 @@ export function usePatientLaboratoryOrders(filter: LaboratoryOrderFilter) {
         .filter((item) => item.orders.length > 0)
     : [];
 
-  console.log("filteredItems-->" + JSON.stringify(filteredItems, null, 2));
-
   return {
     items: filteredItems,
     isLoading,

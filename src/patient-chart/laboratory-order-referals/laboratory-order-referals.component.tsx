@@ -266,8 +266,6 @@ const LaboratoryOrderReferalResults: React.FC<
     [t]
   );
 
-  console.log("laboratoryOrders" + JSON.stringify(laboratoryOrders, null, 2));
-
   const tableRows = useMemo(() => {
     return laboratoryOrders?.map((entry, index) => ({
       ...entry,
@@ -291,7 +289,7 @@ const LaboratoryOrderReferalResults: React.FC<
                   role="tooltip"
                   key={order?.uuid}
                 >
-                  {order?.concept?.display ?? "Not"}
+                  {order?.display}
                 </Tag>
               );
             }
