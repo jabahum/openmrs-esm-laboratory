@@ -40,8 +40,8 @@ interface ApproveResultMenuProps {
 }
 
 const ApproveTestMenu: React.FC<ApproveResultMenuProps> = ({
-  encounterUuid,
   orderItem,
+  encounterUuid,
 }) => {
   const { t } = useTranslation();
   const launchReviewItemModal = useCallback(() => {

@@ -134,7 +134,7 @@ export interface Ob {
   groupMembers: GroupMember[];
   comment: any;
   location: Location;
-  order: any;
+  order: Order;
   encounter: Encounter;
   voided: boolean;
   value: any;
