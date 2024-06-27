@@ -23,8 +23,8 @@ const ReferredTileComponent = () => {
   return (
     <SummaryTile
       label={t("transferred", "Transferred")}
-      value={filteredData.length}
-      headerLabel={t("referredTests", "Ex-Referred tests")}
+      value={filteredData?.length}
+      headerLabel={t("referredTests", "Referred tests")}
     />
   );
 };

@@ -5,6 +5,7 @@ import useSWR, { mutate } from "swr";
 export interface Result {
   uuid: string;
   orderNumber: string;
+  display: string;
   accessionNumber?: string;
   instructions?: string;
   careSetting: CareSetting;
@@ -19,6 +20,7 @@ export interface Result {
   orderer: Orderer;
   urgency: string;
   patient: Patient2;
+  type: string;
 }
 
 export interface CareSetting {
@@ -46,6 +48,7 @@ export interface Patient {
 }
 
 export interface OrderType {
+  uuid: string;
   display: string;
 }
 

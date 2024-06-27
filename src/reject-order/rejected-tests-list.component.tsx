@@ -83,7 +83,7 @@ const RejectedTestsList: React.FC = () => {
             item?.identifierType?.uuid ===
             "e1731641-30ab-102d-86b0-7a5022ba4115"
         )
-        .display.split("=")[1]
+        ?.display.split("=")[1]
         .trim(),
       orderNumber: entry?.orderNumber,
       accessionNumber: entry?.accessionNumber,
