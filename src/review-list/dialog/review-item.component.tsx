@@ -46,7 +46,7 @@ const ReviewItem: React.FC<ReviewItemDialogProps> = ({
     return encounter?.obs?.filter(
       (item) => item?.order?.uuid === orderItem?.uuid
     );
-  }, [encounter?.obs]);
+  }, [encounter?.obs, orderItem]);
 
   const filteredGroupedResults = useMemo(() => {
     let groupedResults = [];
