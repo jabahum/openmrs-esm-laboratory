@@ -1,6 +1,11 @@
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useSession, usePagination } from "@openmrs/esm-framework";
+import {
+  useSession,
+  usePagination,
+  formatDate,
+  parseDate,
+} from "@openmrs/esm-framework";
 import {
   DataTable,
   Table,
@@ -10,6 +15,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Tile,
+  Pagination,
 } from "@carbon/react";
 import styles from "./approved-list.scss";
 import { usePatientQueuesList } from "../ordered-orders/tests-ordered-list.resource";
@@ -31,26 +38,37 @@ const ApprovedList: React.FC = () => {
     results: paginatedQueueEntries,
     currentPage,
   } = usePagination(patientQueueEntries, currentPageSize);
+  const tableHeaders = useMemo(
+    () => [
+      { id: 0, header: t("patient", "Patient"), key: "name" },
 
-  const tableColumns = [
-    { id: 0, header: t("patient", "Patient"), key: "patient" },
-    { id: 1, header: t("orders", "Orders"), key: "orders" },
-    { id: 2, header: t("date", "Date"), key: "date" },
-    { id: 3, header: t("action", "Action"), key: "action" },
-  ];
+      { id: 1, header: t("orders", "Orders"), key: "orders" },
+      { id: 2, header: t("date", "Date"), key: "date" },
+      {
+        id: 3,
+        header: t("action", "Action"),
+        key: "action",
+      },
+    ],
+    [t]
+  );
 
   const tableRows = useMemo(() => {
-    return paginatedQueueEntries.map((entry) => ({
+    return patientQueueEntries.map((entry) => ({
       ...entry,
-      patient: "",
+      name: {
+        content: <span>{entry?.name}</span>,
+      },
       orders: "",
-      date: "",
+      date: {
+        content: <span>{formatDate(parseDate(entry?.dateCreated))}</span>,
+      },
       action: "",
     }));
-  }, []);
+  }, [patientQueueEntries]);
 
   return (
-    <DataTable rows={tableRows} headers={tableColumns} useZebraStyles>
+    <DataTable rows={tableRows} headers={tableHeaders} useZebraStyles>
       {({ rows, headers, getHeaderProps, getTableProps, getRowProps }) => (
         <TableContainer className={styles.tableContainer}>
           <Table {...getTableProps()} className={styles.activePatientsTable}>
@@ -79,6 +97,34 @@ const ApprovedList: React.FC = () => {
               })}
             </TableBody>
           </Table>
+          {rows.length === 0 ? (
+            <div className={styles.tileContainer}>
+              <Tile className={styles.tile}>
+                <div className={styles.tileContent}>
+                  <p className={styles.content}>
+                    {t("noPatientsToDisplay", "No patients to display")}
+                  </p>
+                </div>
+              </Tile>
+            </div>
+          ) : null}
+          <Pagination
+            forwardText="Next page"
+            backwardText="Previous page"
+            page={currentPage}
+            pageSize={currentPageSize}
+            pageSizes={pageSizes}
+            totalItems={paginatedQueueEntries?.length}
+            className={styles.pagination}
+            onChange={({ pageSize, page }) => {
+              if (pageSize !== currentPageSize) {
+                setPageSize(pageSize);
+              }
+              if (page !== currentPage) {
+                goTo(page);
+              }
+            }}
+          />
         </TableContainer>
       )}
     </DataTable>

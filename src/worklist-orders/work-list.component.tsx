@@ -10,14 +10,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Tile,
+  Pagination,
+  InlineLoading,
 } from "@carbon/react";
 import styles from "./work-list.scss";
-import {
-  formatDate,
-  parseDate,
-  usePagination,
-  useSession,
-} from "@openmrs/esm-framework";
+import { usePagination, useSession } from "@openmrs/esm-framework";
 import { usePatientQueuesList } from "../ordered-orders/tests-ordered-list.resource";
 
 const WorkList: React.FC = () => {
@@ -38,22 +36,32 @@ const WorkList: React.FC = () => {
     currentPage,
   } = usePagination(patientQueueEntries, currentPageSize);
   // get picked orders
-  let columns = [
-    { id: 0, header: t("patient", "Patient"), key: "patient" },
 
-    { id: 1, header: t("orders", "Orders"), key: "orders" },
-  ];
+  const tableHeaders = useMemo(
+    () => [
+      { id: 0, header: t("patient", "Patient"), key: "name" },
+
+      { id: 1, header: t("orders", "Orders"), key: "orders" },
+    ],
+    [t]
+  );
 
   const tableRows = useMemo(() => {
     return paginatedQueueEntries.map((entry, index) => ({
       ...entry,
-      patient: "",
+      name: {
+        content: <span>{entry?.name}</span>,
+      },
       orders: "",
     }));
-  }, []);
+  }, [paginatedQueueEntries]);
+
+  if (isLoading) {
+    return <InlineLoading status="active" />;
+  }
 
   return (
-    <DataTable rows={tableRows} headers={columns} useZebraStyles>
+    <DataTable rows={tableRows} headers={tableHeaders} useZebraStyles>
       {({ rows, headers, getHeaderProps, getTableProps, getRowProps }) => (
         <TableContainer className={styles.tableContainer}>
           <Table {...getTableProps()} className={styles.activePatientsTable}>
@@ -82,6 +90,34 @@ const WorkList: React.FC = () => {
               })}
             </TableBody>
           </Table>
+          {rows.length === 0 ? (
+            <div className={styles.tileContainer}>
+              <Tile className={styles.tile}>
+                <div className={styles.tileContent}>
+                  <p className={styles.content}>
+                    {t("noPatientsToDisplay", "No patients to display")}
+                  </p>
+                </div>
+              </Tile>
+            </div>
+          ) : null}
+          <Pagination
+            forwardText="Next page"
+            backwardText="Previous page"
+            page={currentPage}
+            pageSize={currentPageSize}
+            pageSizes={pageSizes}
+            totalItems={paginatedQueueEntries?.length}
+            className={styles.pagination}
+            onChange={({ pageSize, page }) => {
+              if (pageSize !== currentPageSize) {
+                setPageSize(pageSize);
+              }
+              if (page !== currentPage) {
+                goTo(page);
+              }
+            }}
+          />
         </TableContainer>
       )}
     </DataTable>
