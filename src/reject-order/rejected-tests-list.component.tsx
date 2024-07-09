@@ -19,7 +19,7 @@ import {
 
 import { useTranslation } from "react-i18next";
 import { formatDate, parseDate, usePagination } from "@openmrs/esm-framework";
-import styles from "../tests-ordered/laboratory-queue.scss";
+import styles from "../ordered-orders/tests-ordered.scss";
 import { useGetOrdersWorklist } from "../worklist-orders/work-list.resource";
 import { useOrderDate } from "../utils/functions";
 
