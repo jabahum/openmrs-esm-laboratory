@@ -17,6 +17,9 @@ import {
   TableRow,
   Tile,
   Pagination,
+  TableExpandHeader,
+  TableExpandRow,
+  TableExpandedRow,
 } from "@carbon/react";
 import styles from "./approved-list.scss";
 import { usePatientQueuesList } from "../ordered-orders/tests-ordered-list.resource";
@@ -69,11 +72,23 @@ const ApprovedList: React.FC = () => {
 
   return (
     <DataTable rows={tableRows} headers={tableHeaders} useZebraStyles>
-      {({ rows, headers, getHeaderProps, getTableProps, getRowProps }) => (
-        <TableContainer className={styles.tableContainer}>
+      {({
+        rows,
+        headers,
+        getHeaderProps,
+        getTableProps,
+        getRowProps,
+        getExpandHeaderProps,
+        getTableContainerProps,
+      }) => (
+        <TableContainer
+          {...getTableContainerProps}
+          className={styles.tableContainer}
+        >
           <Table {...getTableProps()} className={styles.activePatientsTable}>
             <TableHead>
               <TableRow>
+                <TableExpandHeader enableToggle {...getExpandHeaderProps()} />
                 {headers.map((header) => (
                   <TableHeader {...getHeaderProps({ header })}>
                     {header.header?.content ?? header.header}
@@ -82,16 +97,19 @@ const ApprovedList: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row, index) => {
+              {rows.map((row) => {
                 return (
                   <React.Fragment key={row.id}>
-                    <TableRow {...getRowProps({ row })} key={row.id}>
+                    <TableExpandRow {...getRowProps({ row })} key={row.id}>
                       {row.cells.map((cell) => (
                         <TableCell key={cell.id}>
                           {cell.value?.content ?? cell.value}
                         </TableCell>
                       ))}
-                    </TableRow>
+                    </TableExpandRow>
+                    <TableExpandedRow colSpan={headers.length + 1}>
+                      {/* <TestOrder testOrder={row} /> */}
+                    </TableExpandedRow>
                   </React.Fragment>
                 );
               })}

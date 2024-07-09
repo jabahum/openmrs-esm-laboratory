@@ -8,36 +8,42 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  Tag,
-  InlineLoading,
   Tile,
   Pagination,
+  DataTableSkeleton,
+  TableExpandHeader,
+  TableExpandRow,
+  TableExpandedRow,
+  ExpandedRowView,
 } from "@carbon/react";
 
 import { useTranslation } from "react-i18next";
-import { usePagination, useSession } from "@openmrs/esm-framework";
+import {
+  ErrorState,
+  useConfig,
+  useLayoutType,
+  usePagination,
+  useSession,
+} from "@openmrs/esm-framework";
 import styles from "./tests-ordered.scss";
 import { usePatientQueuesList } from "./tests-ordered-list.resource";
-import {
-  formatWaitTime,
-  getTagColor,
-  trimVisitNumber,
-} from "../utils/functions";
+
+import { formatWaitTime, trimVisitNumber } from "../utils/functions";
+import TestOrder from "../patient-orders/patient-test-orders.component";
 
 const TestsOrderedList: React.FC = () => {
   const { t } = useTranslation();
   const session = useSession();
+  const isTablet = useLayoutType() === "tablet";
 
-  const {
-    patientQueueEntries,
-    isLoading,
-    isError: error,
-    mutate,
-  } = usePatientQueuesList(
-    session?.sessionLocation?.uuid,
-    status,
-    session.user.systemId
-  );
+  const { excludePatientIdentifierCodeTypes } = useConfig();
+
+  const { patientQueueEntries, isLoading, isError, mutate } =
+    usePatientQueuesList(
+      session?.sessionLocation?.uuid,
+      status,
+      session.user.systemId
+    );
 
   const pageSizes = [10, 20, 30, 40, 50];
   const [currentPageSize, setPageSize] = useState(10);
@@ -75,11 +81,6 @@ const TestsOrderedList: React.FC = () => {
         header: t("waitingTime", "Waiting Time"),
         key: "waitTime",
       },
-      {
-        id: 6,
-        header: t("testsOrdered", "Tests Ordered"),
-        key: "testsOrdered",
-      },
     ],
     [t]
   );
@@ -105,19 +106,36 @@ const TestsOrderedList: React.FC = () => {
       waitTime: {
         content: <span> {formatWaitTime(entry.waitTime, t)}</span>,
       },
-      testsOrdered: {
-        content: <span>Tests</span>,
-      },
     }));
   }, [paginatedQueueEntries]);
 
+  if (isLoading) {
+    return <DataTableSkeleton role="progressbar" compact={!isTablet} zebra />;
+  }
+
+  if (isError) {
+    return <ErrorState error={isError} headerTitle={"Ordered Tests"} />;
+  }
+
   return (
     <DataTable rows={tableRows} headers={tableHeaders} useZebraStyles>
-      {({ rows, headers, getHeaderProps, getTableProps, getRowProps }) => (
-        <TableContainer className={styles.tableContainer}>
+      {({
+        rows,
+        headers,
+        getHeaderProps,
+        getTableProps,
+        getRowProps,
+        getExpandHeaderProps,
+        getTableContainerProps,
+      }) => (
+        <TableContainer
+          {...getTableContainerProps}
+          className={styles.tableContainer}
+        >
           <Table {...getTableProps()} className={styles.activePatientsTable}>
             <TableHead>
               <TableRow>
+                <TableExpandHeader enableToggle {...getExpandHeaderProps()} />
                 {headers.map((header) => (
                   <TableHeader {...getHeaderProps({ header })}>
                     {header.header?.content ?? header.header}
@@ -126,16 +144,19 @@ const TestsOrderedList: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row, index) => {
+              {rows.map((row) => {
                 return (
                   <React.Fragment key={row.id}>
-                    <TableRow {...getRowProps({ row })} key={row.id}>
+                    <TableExpandRow {...getRowProps({ row })} key={row.id}>
                       {row.cells.map((cell) => (
                         <TableCell key={cell.id}>
                           {cell.value?.content ?? cell.value}
                         </TableCell>
                       ))}
-                    </TableRow>
+                    </TableExpandRow>
+                    <TableExpandedRow colSpan={headers.length + 1}>
+                      {/* <TestOrder testOrder={row} /> */}
+                    </TableExpandedRow>
                   </React.Fragment>
                 );
               })}
