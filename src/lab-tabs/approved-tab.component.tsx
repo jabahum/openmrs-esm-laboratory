@@ -1,10 +1,10 @@
 import React from "react";
-import CompletedList from "../completed-list/completed-list.component";
+import ApprovedList from "../approved-list/approved-list.component";
 
 const ApprovedComponent = () => {
   return (
     <div>
-      <CompletedList fulfillerStatus={"COMPLETED"} />
+      <ApprovedList />
     </div>
   );
 };

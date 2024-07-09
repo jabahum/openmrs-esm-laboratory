@@ -4,7 +4,7 @@ import WorkList from "../work-list/work-list.component";
 const WorkListComponent = () => {
   return (
     <div>
-      <WorkList fulfillerStatus={"IN_PROGRESS"} />
+      <WorkList />
     </div>
   );
 };

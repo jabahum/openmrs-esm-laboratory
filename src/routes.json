@@ -74,43 +74,7 @@
             "component": "worklistComponent",
             "meta": {
                 "name": "worklistPanelSlot",
-                "title": "Worklist"
-            }
-        },
-        {
-            "name": "review-panel-component",
-            "slot": "lab-panels-slot",
-            "component": "reviewComponent",
-            "meta": {
-                "name": "reviewPanelSlot",
-                "title": "Review"
-            }
-        },
-        {
-            "name": "approved-panel-component",
-            "slot": "lab-panels-slot",
-            "component": "approvedComponent",
-            "meta": {
-                "name": "approvedPanelSlot",
-                "title": "Approved"
-            }
-        },
-        {
-          "name": "rejected-panel-component",
-          "slot": "lab-panels-slot",
-          "component": "rejectedComponent",
-          "meta": {
-            "name": "rejectedPanelSlot",
-            "title": "Rejected"
-          }
-        },
-        {
-            "name": "tests-ordered-tile-component",
-            "slot": "lab-tiles-slot",
-            "component": "testOrderedTileComponent",
-            "meta": {
-                "name": "testsOrderedTileSlot",
-                "title": "Ordered tests"
+                "title": "Work List"
             }
         },
         {
@@ -119,16 +83,53 @@
             "component": "referredTestComponent",
             "meta": {
                 "name": "referredPanleSlot",
-                "title": "Referred Tests"
+                "title": "Referred List"
             }
         },
+        {
+            "name": "review-panel-component",
+            "slot": "lab-panels-slot",
+            "component": "reviewComponent",
+            "meta": {
+                "name": "reviewPanelSlot",
+                "title": "Review List"
+            }
+        },
+        {
+            "name": "approved-panel-component",
+            "slot": "lab-panels-slot",
+            "component": "approvedComponent",
+            "meta": {
+                "name": "approvedPanelSlot",
+                "title": "Approved List"
+            }
+        },
+        {
+          "name": "rejected-panel-component",
+          "slot": "lab-panels-slot",
+          "component": "rejectedComponent",
+          "meta": {
+            "name": "rejectedPanelSlot",
+            "title": "Rejected List"
+          }
+        },
+        {
+            "name": "tests-ordered-tile-component",
+            "slot": "lab-tiles-slot",
+            "component": "testOrderedTileComponent",
+            "meta": {
+                "name": "testsOrderedTileSlot",
+                "title": "Ordered Tests"
+            }
+        },
+        
       {
         "name": "worklist-tile-component",
         "slot": "lab-tiles-slot",
         "component": "worklistTileComponent",
         "meta": {
           "name": "worklisTileSlot",
-          "title": "Worklist"
+          "title": "Work List"
         }
       },
         {
@@ -137,7 +138,7 @@
             "component": "completedTileComponent",
             "meta": {
                 "name": "completedTileSlot",
-                "title": "Completed"
+                "title": "Completed Test"
             }
         },
         {

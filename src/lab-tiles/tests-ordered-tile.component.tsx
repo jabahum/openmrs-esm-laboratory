@@ -19,9 +19,9 @@ const TestsOrderedTileComponent = () => {
 
   return (
     <SummaryTile
-      label={t("orders", "Orders")}
+      label={t("ordered", "Ordered")}
       value={filteredData?.length}
-      headerLabel={t("testsOrdered", "Tests ordered")}
+      headerLabel={t("ordered", "Ordered Tests")}
     />
   );
 };

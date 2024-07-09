@@ -1,4 +1,6 @@
 import React, { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useSession, usePagination } from "@openmrs/esm-framework";
 import {
   DataTable,
   Table,
@@ -9,13 +11,10 @@ import {
   TableHeader,
   TableRow,
 } from "@carbon/react";
+import styles from "./approved-list.scss";
+import { usePatientQueuesList } from "../tests-ordered/tests-ordered-list.resource";
 
-import { useTranslation } from "react-i18next";
-import { usePagination, useSession } from "@openmrs/esm-framework";
-import styles from "./laboratory-queue.scss";
-import { usePatientQueuesList } from "./tests-ordered-list.resource";
-
-const TestsOrderedList: React.FC = () => {
+const ApprovedList: React.FC = () => {
   const { t } = useTranslation();
   const session = useSession();
 
@@ -33,43 +32,25 @@ const TestsOrderedList: React.FC = () => {
     currentPage,
   } = usePagination(patientQueueEntries, currentPageSize);
 
-  // get patients in queue
-  let columns = [
-    { id: 0, header: t("visitId", "Visit ID"), key: "visitId" },
-    { id: 1, header: t("patientNumber", "Patient No."), key: "patientNumber" },
-    { id: 2, header: t("names", "Name"), key: "patient" },
-    { id: 3, header: t("age", "Age"), key: "age" },
-    { id: 4, header: t("orderedFrom", "Ordered From"), key: "orderedFrom" },
-    { id: 5, header: t("waitingTime", "Waiting Time"), key: "waitingTime" },
-    {
-      id: 6,
-      header: t("testsOrdered", "Test(s) Ordered"),
-      key: "testsOrdered",
-    },
+  const tableColumns = [
+    { id: 0, header: t("patient", "Patient"), key: "patient" },
+    { id: 1, header: t("orders", "Orders"), key: "orders" },
+    { id: 2, header: t("date", "Date"), key: "date" },
+    { id: 3, header: t("action", "Action"), key: "action" },
   ];
 
   const tableRows = useMemo(() => {
-    return paginatedQueueEntries.map((entry, index) => {
-      return {
-        ...entry,
-        visitId: entry?.uuid,
-        patientNumber: entry.patient?.identifiers[0].display,
-        names: entry?.patient?.display.split("-")[1],
-        age: "",
-        orderedFrom: "",
-        waitingTime: "",
-        testsOrdered: "",
-      };
-    });
+    return paginatedQueueEntries.map((entry) => ({
+      ...entry,
+      patient: "",
+      orders: "",
+      date: "",
+      action: "",
+    }));
   }, []);
 
   return (
-    <DataTable
-      rows={tableRows}
-      headers={columns}
-      useZebraStyles
-      overflowMenuOnHover={true}
-    >
+    <DataTable rows={tableRows} headers={tableColumns} useZebraStyles>
       {({ rows, headers, getHeaderProps, getTableProps, getRowProps }) => (
         <TableContainer className={styles.tableContainer}>
           <Table {...getTableProps()} className={styles.activePatientsTable}>
@@ -83,7 +64,7 @@ const TestsOrderedList: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => {
+              {rows.map((row, index) => {
                 return (
                   <React.Fragment key={row.id}>
                     <TableRow {...getRowProps({ row })} key={row.id}>
@@ -104,4 +85,4 @@ const TestsOrderedList: React.FC = () => {
   );
 };
 
-export default TestsOrderedList;
+export default ApprovedList;
