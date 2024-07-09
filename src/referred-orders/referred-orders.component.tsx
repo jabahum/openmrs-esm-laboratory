@@ -24,7 +24,7 @@ import {
 } from "@carbon/react";
 import { getStatusColor } from "../utils/functions";
 import styles from "./referred-orders.scss";
-import { usePatientQueuesList } from "../tests-ordered/tests-ordered-list.resource";
+import { usePatientQueuesList } from "../ordered-orders/tests-ordered-list.resource";
 
 const ReferredList: React.FC = () => {
   const { t } = useTranslation();

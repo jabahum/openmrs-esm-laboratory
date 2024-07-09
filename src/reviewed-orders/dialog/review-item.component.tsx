@@ -16,7 +16,7 @@ import {
 import { useGetConceptById } from "../../patient-chart/results-summary/results-summary.resource";
 import { ApproverOrder } from "./review-item.resource";
 import { showNotification, showSnackbar } from "@openmrs/esm-framework";
-import { Result } from "../../work-list/work-list.resource";
+import { Result } from "../../worklist-orders/work-list.resource";
 import { extractErrorMessagesFromResponse } from "../../utils/functions";
 
 interface ReviewItemDialogProps {

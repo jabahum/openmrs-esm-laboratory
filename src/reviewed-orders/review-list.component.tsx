@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useGetOrdersWorklist } from "../work-list/work-list.resource";
+import { useGetOrdersWorklist } from "../worklist-orders/work-list.resource";
 import {
   formatDate,
   parseDate,
@@ -22,7 +22,7 @@ import {
 import styles from "./review-list.scss";
 import { getStatusColor, useOrderDate } from "../utils/functions";
 import { REFERINSTRUCTIONS } from "../constants";
-import { usePatientQueuesList } from "../tests-ordered/tests-ordered-list.resource";
+import { usePatientQueuesList } from "../ordered-orders/tests-ordered-list.resource";
 
 const ReviewList: React.FC = () => {
   const { t } = useTranslation();

@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useSession, usePagination } from "@openmrs/esm-framework";
+
 import {
   DataTable,
   Table,
@@ -11,10 +11,16 @@ import {
   TableHeader,
   TableRow,
 } from "@carbon/react";
-import styles from "./approved-list.scss";
-import { usePatientQueuesList } from "../tests-ordered/tests-ordered-list.resource";
+import styles from "./work-list.scss";
+import {
+  formatDate,
+  parseDate,
+  usePagination,
+  useSession,
+} from "@openmrs/esm-framework";
+import { usePatientQueuesList } from "../ordered-orders/tests-ordered-list.resource";
 
-const ApprovedList: React.FC = () => {
+const WorkList: React.FC = () => {
   const { t } = useTranslation();
   const session = useSession();
 
@@ -31,26 +37,23 @@ const ApprovedList: React.FC = () => {
     results: paginatedQueueEntries,
     currentPage,
   } = usePagination(patientQueueEntries, currentPageSize);
-
-  const tableColumns = [
+  // get picked orders
+  let columns = [
     { id: 0, header: t("patient", "Patient"), key: "patient" },
+
     { id: 1, header: t("orders", "Orders"), key: "orders" },
-    { id: 2, header: t("date", "Date"), key: "date" },
-    { id: 3, header: t("action", "Action"), key: "action" },
   ];
 
   const tableRows = useMemo(() => {
-    return paginatedQueueEntries.map((entry) => ({
+    return paginatedQueueEntries.map((entry, index) => ({
       ...entry,
       patient: "",
       orders: "",
-      date: "",
-      action: "",
     }));
   }, []);
 
   return (
-    <DataTable rows={tableRows} headers={tableColumns} useZebraStyles>
+    <DataTable rows={tableRows} headers={columns} useZebraStyles>
       {({ rows, headers, getHeaderProps, getTableProps, getRowProps }) => (
         <TableContainer className={styles.tableContainer}>
           <Table {...getTableProps()} className={styles.activePatientsTable}>
@@ -85,4 +88,4 @@ const ApprovedList: React.FC = () => {
   );
 };
 
-export default ApprovedList;
+export default WorkList;

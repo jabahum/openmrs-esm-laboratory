@@ -20,7 +20,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { formatDate, parseDate, usePagination } from "@openmrs/esm-framework";
 import styles from "../tests-ordered/laboratory-queue.scss";
-import { useGetOrdersWorklist } from "../work-list/work-list.resource";
+import { useGetOrdersWorklist } from "../worklist-orders/work-list.resource";
 import { useOrderDate } from "../utils/functions";
 
 const RejectedTestsList: React.FC = () => {
