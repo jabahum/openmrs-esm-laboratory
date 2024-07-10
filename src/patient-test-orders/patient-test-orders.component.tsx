@@ -9,18 +9,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableSelectAll,
+  TableSelectRow,
 } from "@carbon/react";
 import { OverflowMenuVertical } from "@carbon/react/icons";
 
 import { useTranslation } from "react-i18next";
-import {
-  ExtensionSlot,
-  useConfig,
-  useLayoutType,
-} from "@openmrs/esm-framework";
+import { ExtensionSlot, useLayoutType } from "@openmrs/esm-framework";
 import { usePatientLabOrders } from "./patient-test-orders.resource";
 import styles from "./patient-test-orders.scss";
 import OrderCustomOverflowMenuComponent from "../ui-components/overflow-menu.component";
+import ScheduleTestOrdersButton from "../ordered-orders/schedule-test-orders.component";
 
 interface TestOrderProps {
   patientUuid: string;
@@ -75,48 +74,62 @@ const TestOrders: React.FC<TestOrderProps> = ({ patientUuid }) => {
   }
 
   return (
-    <div className={styles.testOrder}>
-      <DataTable
-        rows={testRows}
-        headers={testOrderHeaders}
-        size={isTablet ? "lg" : "sm"}
-        useZebraStyles
-      >
-        {({
-          rows,
-          headers,
-          getHeaderProps,
-          getRowProps,
-          getTableProps,
-          getTableContainerProps,
-        }) => (
-          <TableContainer {...getTableContainerProps()}>
-            <Table {...getTableProps()} aria-label="testorders">
-              <TableHead>
-                <TableRow>
-                  {headers.map((header) => (
-                    <TableHeader {...getHeaderProps({ header })}>
-                      {header.header}
-                    </TableHeader>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row) => (
-                  <TableRow {...getRowProps({ row })}>
-                    {row.cells.map((cell) => (
-                      <TableCell key={cell.id} className={styles.testCell}>
-                        {cell.value}
-                      </TableCell>
+    <>
+      <div className={styles.testOrder}>
+        <DataTable
+          rows={testRows}
+          headers={testOrderHeaders}
+          size={isTablet ? "lg" : "sm"}
+          useZebraStyles
+        >
+          {({
+            rows,
+            headers,
+            getHeaderProps,
+            getRowProps,
+            getTableProps,
+            getTableContainerProps,
+            getSelectionProps,
+          }) => (
+            <TableContainer {...getTableContainerProps()}>
+              <Table {...getTableProps()} aria-label="testorders">
+                <TableHead>
+                  <TableRow>
+                    <TableSelectAll {...getSelectionProps()} />
+                    {headers.map((header) => (
+                      <TableHeader {...getHeaderProps({ header })}>
+                        {header.header}
+                      </TableHeader>
                     ))}
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {rows.map((row) => (
+                    <TableRow {...getRowProps({ row })}>
+                      <TableSelectRow
+                        {...getSelectionProps({
+                          row,
+                        })}
+                      />
+                      {row.cells.map((cell) => (
+                        <TableCell key={cell.id} className={styles.testCell}>
+                          {cell.value}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </DataTable>
+      </div>
+      <div style={{ margin: "1rem" }}>
+        {orders.length > 0 && (
+          <ScheduleTestOrdersButton orders={orders} closeModal={() => true} />
         )}
-      </DataTable>
-    </div>
+      </div>
+    </>
   );
 };
 

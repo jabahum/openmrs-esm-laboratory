@@ -35,12 +35,11 @@ const TestsOrderedList: React.FC = () => {
   const isTablet = useLayoutType() === "tablet";
   const locations = useLocations();
 
-  const { patientQueueEntries, isLoading, isError, mutate } =
-    usePatientQueuesList(
-      session?.sessionLocation?.uuid,
-      status,
-      session.user.systemId
-    );
+  const { patientQueueEntries, isLoading, isError } = usePatientQueuesList(
+    session?.sessionLocation?.uuid,
+    status,
+    session.user.systemId
+  );
 
   const pageSizes = [10, 20, 30, 40, 50];
   const [currentPageSize, setPageSize] = useState(10);

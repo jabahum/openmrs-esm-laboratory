@@ -49,6 +49,10 @@
             "component": "addToWorklistDialog"
         },
         {
+            "name": "schedule-test-orders-dialog",
+            "component": "scheduleTestOrdersDialog"
+        },
+        {
             "name": "results-summary",
             "component": "resultsSummaryWorkSpace"
         },
@@ -105,13 +109,13 @@
             }
         },
         {
-          "name": "rejected-panel-component",
-          "slot": "lab-panels-slot",
-          "component": "rejectedComponent",
-          "meta": {
-            "name": "rejectedPanelSlot",
-            "title": "Rejected List"
-          }
+            "name": "rejected-panel-component",
+            "slot": "lab-panels-slot",
+            "component": "rejectedComponent",
+            "meta": {
+                "name": "rejectedPanelSlot",
+                "title": "Rejected List"
+            }
         },
         {
             "name": "tests-ordered-tile-component",
@@ -122,16 +126,15 @@
                 "title": "Ordered Tests"
             }
         },
-        
-      {
-        "name": "worklist-tile-component",
-        "slot": "lab-tiles-slot",
-        "component": "worklistTileComponent",
-        "meta": {
-          "name": "worklisTileSlot",
-          "title": "Work List"
-        }
-      },
+        {
+            "name": "worklist-tile-component",
+            "slot": "lab-tiles-slot",
+            "component": "worklistTileComponent",
+            "meta": {
+                "name": "worklisTileSlot",
+                "title": "Work List"
+            }
+        },
         {
             "name": "completed-tile-component",
             "slot": "lab-tiles-slot",
@@ -142,13 +145,13 @@
             }
         },
         {
-          "name": "rejected-tile-component",
-          "slot": "lab-tiles-slot",
-          "component": "rejectedTileComponent",
-          "meta": {
-            "name": "rejectedTileSlot",
-            "title": "Rejected Tests"
-          }
+            "name": "rejected-tile-component",
+            "slot": "lab-tiles-slot",
+            "component": "rejectedTileComponent",
+            "meta": {
+                "name": "rejectedTileSlot",
+                "title": "Rejected Tests"
+            }
         },
         {
             "name": "referred-tile-component",

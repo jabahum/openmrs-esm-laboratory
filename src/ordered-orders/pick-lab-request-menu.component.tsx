@@ -13,7 +13,6 @@ const PickLabRequestActionMenu: React.FC<PickLabRequestActionMenuProps> = ({
   order,
 }) => {
   const { t } = useTranslation();
-
   const launchPickLabRequestModal = useCallback(() => {
     const dispose = showModal("add-to-worklist-dialog", {
       closeModal: () => dispose(),

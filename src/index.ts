@@ -6,6 +6,7 @@ import laboratoryReferralWorkspaceComponent from "./patient-chart/laboratory-wor
 import laboratory from "./laboratory.component";
 import laboratoryOrder from "./patient-chart/patient-laboratory-order-results.component";
 import addToWorklist from "./ordered-orders/lab-dialogs/add-to-worklist-dialog.component";
+import scheduleTestOrders from "./ordered-orders/lab-dialogs/schedulue-test-orders-dialog.component";
 import sendEmail from "./patient-chart/results-summary/send-email-dialog.component";
 import reviewItemDialogComponent from "./reviewed-orders/dialog/review-item.component";
 import rejectOrderDialogComponent from "./reject-order/reject-order-dialog.component";
@@ -69,6 +70,11 @@ export const laboratoryOrderComponent = getSyncLifecycle(
 );
 
 export const addToWorklistDialog = getSyncLifecycle(addToWorklist, options);
+
+export const scheduleTestOrdersDialog = getSyncLifecycle(
+  scheduleTestOrders,
+  options
+);
 
 export const sendEmailDialog = getSyncLifecycle(sendEmail, options);
 
