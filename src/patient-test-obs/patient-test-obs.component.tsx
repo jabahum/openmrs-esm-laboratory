@@ -13,27 +13,32 @@ import {
 } from "@carbon/react";
 
 import { useTranslation } from "react-i18next";
-import { useLayoutType } from "@openmrs/esm-framework";
+import { useConfig, useLayoutType } from "@openmrs/esm-framework";
 import {
   useLabEncounter,
   useOrderConceptByUuid,
-} from "./patient-test-orders.resource";
+  usePatientLabEnounters,
+} from "./patient-test-obs.resource";
 import { Order } from "@openmrs/esm-patient-common-lib";
 import styles from "./patient-test-orders.scss";
 
 interface TestOrderProps {
-  testOrder: Order;
+  testOrder?: Order;
+  patientUuid: string;
 }
 
-const TestOrder: React.FC<TestOrderProps> = ({ testOrder }) => {
+const TestObs: React.FC<TestOrderProps> = ({ testOrder, patientUuid }) => {
   const { t } = useTranslation();
   const isTablet = useLayoutType() === "tablet";
+  const { laboratoryEncounterTypeUuid } = useConfig();
+
+  console.log("testOrder" + patientUuid);
 
   const { concept, isLoading: isLoadingTestConcepts } = useOrderConceptByUuid(
-    testOrder.concept.uuid
+    testOrder?.concept?.uuid
   );
   const { encounter, isLoading: isLoadingResult } = useLabEncounter(
-    testOrder.encounter.uuid
+    testOrder?.encounter?.uuid
   );
 
   const tableHeaders: Array<{ key: string; header: string }> = [
@@ -151,4 +156,4 @@ const TestOrder: React.FC<TestOrderProps> = ({ testOrder }) => {
   );
 };
 
-export default TestOrder;
+export default TestObs;

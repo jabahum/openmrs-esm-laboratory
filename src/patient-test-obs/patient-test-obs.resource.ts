@@ -11,6 +11,7 @@ import { type Order } from "@openmrs/esm-patient-common-lib";
 const labEncounterRepresentation =
   "custom:(uuid,encounterDatetime,encounterType,location:(uuid,name)," +
   "patient:(uuid,display),encounterProviders:(uuid,provider:(uuid,name))," +
+  "orders," +
   "obs:(uuid,obsDatetime,voided,groupMembers,formFieldNamespace,formFieldPath,order:(uuid,display),concept:(uuid,name:(uuid,name))," +
   "value:(uuid,display,name:(uuid,name),names:(uuid,conceptNameType,name))))";
 const labConceptRepresentation =
@@ -164,6 +165,25 @@ export function useLabEncounter(encounterUuid: string) {
 
   return {
     encounter: data?.data,
+    isLoading,
+    isError: error,
+    isValidating,
+    mutate,
+  };
+}
+
+export function usePatientLabEnounters(
+  patientUuid: string,
+  encounterTypeUuid: string
+) {
+  const apiUrl = `${restBaseUrl}/encounter?patient=${patientUuid}&encounterType=${encounterTypeUuid}&v=${labEncounterRepresentation}`;
+  const { data, error, isLoading, isValidating, mutate } = useSWR<
+    FetchResponse<Array<Encounter>>,
+    Error
+  >(apiUrl, openmrsFetch);
+
+  return {
+    encounters: data?.data,
     isLoading,
     isError: error,
     isValidating,

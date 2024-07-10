@@ -14,29 +14,26 @@ import {
   TableExpandHeader,
   TableExpandRow,
   TableExpandedRow,
-  ExpandedRowView,
 } from "@carbon/react";
 
 import { useTranslation } from "react-i18next";
 import {
   ErrorState,
-  useConfig,
   useLayoutType,
+  useLocations,
   usePagination,
   useSession,
 } from "@openmrs/esm-framework";
 import styles from "./tests-ordered.scss";
 import { usePatientQueuesList } from "./tests-ordered-list.resource";
-
 import { formatWaitTime, trimVisitNumber } from "../utils/functions";
-import TestOrder from "../patient-orders/patient-test-orders.component";
+import TestOrders from "../patient-test-orders/patient-test-orders.component";
 
 const TestsOrderedList: React.FC = () => {
   const { t } = useTranslation();
   const session = useSession();
   const isTablet = useLayoutType() === "tablet";
-
-  const { excludePatientIdentifierCodeTypes } = useConfig();
+  const locations = useLocations();
 
   const { patientQueueEntries, isLoading, isError, mutate } =
     usePatientQueuesList(
@@ -88,6 +85,8 @@ const TestsOrderedList: React.FC = () => {
   const tableRows = useMemo(() => {
     return paginatedQueueEntries?.map((entry) => ({
       ...entry,
+      id: entry.uuid,
+      patientUuid: entry.patientUuid,
       visitId: {
         content: <span>{trimVisitNumber(entry.visitNumber)}</span>,
       },
@@ -101,7 +100,8 @@ const TestsOrderedList: React.FC = () => {
         content: <span>{entry?.patientAge}</span>,
       },
       orderedFrom: {
-        content: <span>{entry?.locationFrom}</span>,
+        content: locations.find((loc) => loc.uuid === entry?.locationFrom)
+          ?.display,
       },
       waitTime: {
         content: <span> {formatWaitTime(entry.waitTime, t)}</span>,
@@ -144,7 +144,7 @@ const TestsOrderedList: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => {
+              {rows.map((row, index) => {
                 return (
                   <React.Fragment key={row.id}>
                     <TableExpandRow {...getRowProps({ row })} key={row.id}>
@@ -155,7 +155,7 @@ const TestsOrderedList: React.FC = () => {
                       ))}
                     </TableExpandRow>
                     <TableExpandedRow colSpan={headers.length + 1}>
-                      {/* <TestOrder testOrder={row} /> */}
+                      <TestOrders patientUuid={tableRows[index].patientUuid} />
                     </TableExpandedRow>
                   </React.Fragment>
                 );
