@@ -27,7 +27,7 @@ import {
 import styles from "./tests-ordered.scss";
 import { usePatientQueuesList } from "./tests-ordered-list.resource";
 import { formatWaitTime, trimVisitNumber } from "../utils/functions";
-import TestOrders from "../patient-test-orders/patient-test-orders.component";
+import TestOrders from "./patient-test-orders.component";
 
 const TestsOrderedList: React.FC = () => {
   const { t } = useTranslation();
@@ -128,7 +128,7 @@ const TestsOrderedList: React.FC = () => {
         getTableContainerProps,
       }) => (
         <TableContainer
-          {...getTableContainerProps}
+          {...getTableContainerProps()}
           className={styles.tableContainer}
         >
           <Table {...getTableProps()} className={styles.activePatientsTable}>

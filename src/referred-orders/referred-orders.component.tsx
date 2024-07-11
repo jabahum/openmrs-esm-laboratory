@@ -19,6 +19,8 @@ import {
 import { getStatusColor } from "../utils/functions";
 import styles from "./referred-orders.scss";
 import { usePatientQueuesList } from "../ordered-orders/tests-ordered-list.resource";
+import TestOrders from "../ordered-orders/patient-test-orders.component";
+import ReferredTestOrders from "./referred-test-orders.component";
 
 const ReferredList: React.FC = () => {
   const { t } = useTranslation();
@@ -84,7 +86,7 @@ const ReferredList: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => {
+              {rows.map((row, index) => {
                 return (
                   <React.Fragment key={row.id}>
                     <TableExpandRow {...getRowProps({ row })} key={row.id}>
@@ -95,7 +97,9 @@ const ReferredList: React.FC = () => {
                       ))}
                     </TableExpandRow>
                     <TableExpandedRow colSpan={headers.length + 1}>
-                      {/* <TestOrder testOrder={row} /> */}
+                      <ReferredTestOrders
+                        patientUuid={tableRows[index]?.patientUuid}
+                      />
                     </TableExpandedRow>
                   </React.Fragment>
                 );

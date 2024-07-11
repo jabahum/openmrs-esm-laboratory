@@ -1,5 +1,6 @@
 @use '@carbon/styles/scss/spacing';
 @use '@carbon/styles/scss/type';
+@use '@carbon/styles/scss/colors';
 @import "~@openmrs/esm-styleguide/src/vars";
 @import '../root.scss';
 
@@ -206,4 +207,21 @@ title {
   @include type.type-style('heading-compact-02');
   color: $text-02;
   margin-bottom: 0.5rem;
+}
+
+.testOrder {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid colors.$gray-20;
+  margin-top: 1rem;
+  border-bottom: none;
+}
+
+.testCell {
+  padding-left: spacing.$spacing-05 !important;
+}
+
+.testType {
+  color: colors.$blue-60;
 }

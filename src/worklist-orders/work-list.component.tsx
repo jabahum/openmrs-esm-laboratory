@@ -20,6 +20,8 @@ import {
 import styles from "./work-list.scss";
 import { usePagination, useSession } from "@openmrs/esm-framework";
 import { usePatientQueuesList } from "../ordered-orders/tests-ordered-list.resource";
+import TestOrders from "../ordered-orders/patient-test-orders.component";
+import WorkListTestOrders from "./work-list-test-orders.component";
 
 const WorkList: React.FC = () => {
   const { t } = useTranslation();
@@ -90,7 +92,7 @@ const WorkList: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => {
+              {rows.map((row, index) => {
                 return (
                   <React.Fragment key={row.id}>
                     <TableExpandRow {...getRowProps({ row })} key={row.id}>
@@ -101,7 +103,9 @@ const WorkList: React.FC = () => {
                       ))}
                     </TableExpandRow>
                     <TableExpandedRow colSpan={headers.length + 1}>
-                      {/* <TestOrder testOrder={row} /> */}
+                      <WorkListTestOrders
+                        patientUuid={tableRows[index]?.patientUuid}
+                      />
                     </TableExpandedRow>
                   </React.Fragment>
                 );

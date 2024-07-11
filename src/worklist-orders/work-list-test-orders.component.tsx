@@ -16,16 +16,15 @@ import { OverflowMenuVertical } from "@carbon/react/icons";
 
 import { useTranslation } from "react-i18next";
 import { ExtensionSlot, useLayoutType } from "@openmrs/esm-framework";
-import { usePatientLabOrders } from "./patient-test-orders.resource";
-import styles from "./patient-test-orders.scss";
+import styles from "./work-list.scss";
 import OrderCustomOverflowMenuComponent from "../ui-components/overflow-menu.component";
-import ScheduleTestOrdersButton from "../ordered-orders/schedule-test-orders.component";
+import { usePatientLabOrders } from "../patient-test-orders/patient-test-orders.resource";
 
 interface TestOrderProps {
   patientUuid: string;
 }
 
-const TestOrders: React.FC<TestOrderProps> = ({ patientUuid }) => {
+const WorkListTestOrders: React.FC<TestOrderProps> = ({ patientUuid }) => {
   const { t } = useTranslation();
   const isTablet = useLayoutType() === "tablet";
 
@@ -33,10 +32,22 @@ const TestOrders: React.FC<TestOrderProps> = ({ patientUuid }) => {
 
   const testOrderHeaders: Array<{ key: string; header: string }> = [
     {
-      key: "tests",
-      header: t("tests", "Test"),
+      key: "sampleId",
+      header: t("sampleId", "Sample ID"),
     },
 
+    {
+      key: "date",
+      header: t("date", "Date"),
+    },
+    {
+      key: "test",
+      header: t("test", "Test"),
+    },
+    {
+      key: "status",
+      header: t("status", "Status"),
+    },
     {
       key: "actions",
       header: t("actions", "Action"),
@@ -47,7 +58,10 @@ const TestOrders: React.FC<TestOrderProps> = ({ patientUuid }) => {
     return orders?.map((order, index) => ({
       ...orders,
       id: order?.uuid,
+      sampleId: order?.accessionNumber,
+      date: order.dateActivated,
       tests: order?.display,
+      status: order?.fulfillerStatus,
       actions: (
         <OrderCustomOverflowMenuComponent
           menuTitle={
@@ -62,7 +76,7 @@ const TestOrders: React.FC<TestOrderProps> = ({ patientUuid }) => {
           <ExtensionSlot
             className={styles.menuLink}
             state={{ order: orders[index] }}
-            name="order-actions-slot"
+            name="worklist-order-actions-slot"
           />
         </OrderCustomOverflowMenuComponent>
       ),
@@ -124,13 +138,8 @@ const TestOrders: React.FC<TestOrderProps> = ({ patientUuid }) => {
           )}
         </DataTable>
       </div>
-      <div style={{ margin: "1rem" }}>
-        {orders.length > 0 && (
-          <ScheduleTestOrdersButton orders={orders} closeModal={() => true} />
-        )}
-      </div>
     </>
   );
 };
 
-export default TestOrders;
+export default WorkListTestOrders;

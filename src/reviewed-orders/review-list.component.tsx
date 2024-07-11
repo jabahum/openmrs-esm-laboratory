@@ -24,13 +24,15 @@ import {
 
 import styles from "./review-list.scss";
 import { usePatientQueuesList } from "../ordered-orders/tests-ordered-list.resource";
+import TestOrders from "../ordered-orders/patient-test-orders.component";
+import ReviewTestOrders from "./review-test-orders.components";
 
 const ReviewList: React.FC = () => {
   const { t } = useTranslation();
 
   const session = useSession();
 
-  const { patientQueueEntries, isLoading } = usePatientQueuesList(
+  const { patientQueueEntries } = usePatientQueuesList(
     session?.sessionLocation?.uuid,
     status,
     session.user.systemId
@@ -100,7 +102,7 @@ const ReviewList: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => {
+              {rows.map((row, index) => {
                 return (
                   <React.Fragment key={row.id}>
                     <TableExpandRow {...getRowProps({ row })} key={row.id}>
@@ -111,7 +113,9 @@ const ReviewList: React.FC = () => {
                       ))}
                     </TableExpandRow>
                     <TableExpandedRow colSpan={headers.length + 1}>
-                      {/* <TestOrder testOrder={row} /> */}
+                      <ReviewTestOrders
+                        patientUuid={tableRows[index]?.patientUuid}
+                      />
                     </TableExpandedRow>
                   </React.Fragment>
                 );

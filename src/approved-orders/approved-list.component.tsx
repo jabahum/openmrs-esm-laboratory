@@ -23,6 +23,7 @@ import {
 } from "@carbon/react";
 import styles from "./approved-list.scss";
 import { usePatientQueuesList } from "../ordered-orders/tests-ordered-list.resource";
+import ApprovedTestOrders from "./approved-test-orders.component";
 
 const ApprovedList: React.FC = () => {
   const { t } = useTranslation();
@@ -97,7 +98,7 @@ const ApprovedList: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => {
+              {rows.map((row, index) => {
                 return (
                   <React.Fragment key={row.id}>
                     <TableExpandRow {...getRowProps({ row })} key={row.id}>
@@ -108,7 +109,9 @@ const ApprovedList: React.FC = () => {
                       ))}
                     </TableExpandRow>
                     <TableExpandedRow colSpan={headers.length + 1}>
-                      {/* <TestOrder testOrder={row} /> */}
+                      <ApprovedTestOrders
+                        patientUuid={tableRows[index]?.patientUuid}
+                      />
                     </TableExpandedRow>
                   </React.Fragment>
                 );
