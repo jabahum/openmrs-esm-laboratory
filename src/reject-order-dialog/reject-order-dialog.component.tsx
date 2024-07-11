@@ -10,13 +10,13 @@ import {
 } from "@carbon/react";
 import { useTranslation } from "react-i18next";
 import styles from "./reject-order-dialog.scss";
-import { Result } from "../worklist-orders/work-list.resource";
 import { RejectOrder } from "./reject-order-dialog.resource";
 import { showNotification, showSnackbar } from "@openmrs/esm-framework";
+import { Order } from "@openmrs/esm-patient-common-lib";
 import { extractErrorMessagesFromResponse } from "../utils/functions";
 
 interface RejectOrderDialogProps {
-  order: Result;
+  order: Order;
   closeModal: () => void;
 }
 

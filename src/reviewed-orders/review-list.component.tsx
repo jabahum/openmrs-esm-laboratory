@@ -24,7 +24,7 @@ import {
 
 import styles from "./review-list.scss";
 import { usePatientQueuesList } from "../ordered-orders/tests-ordered-list.resource";
-import TestOrders from "../ordered-orders/patient-test-orders.component";
+import TestOrders from "../ordered-orders/ordered-test-orders.component";
 import ReviewTestOrders from "./review-test-orders.components";
 
 const ReviewList: React.FC = () => {

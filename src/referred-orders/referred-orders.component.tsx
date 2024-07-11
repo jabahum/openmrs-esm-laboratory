@@ -19,7 +19,7 @@ import {
 import { getStatusColor } from "../utils/functions";
 import styles from "./referred-orders.scss";
 import { usePatientQueuesList } from "../ordered-orders/tests-ordered-list.resource";
-import TestOrders from "../ordered-orders/patient-test-orders.component";
+import TestOrders from "../ordered-orders/ordered-test-orders.component";
 import ReferredTestOrders from "./referred-test-orders.component";
 
 const ReferredList: React.FC = () => {

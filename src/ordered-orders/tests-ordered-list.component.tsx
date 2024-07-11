@@ -27,7 +27,7 @@ import {
 import styles from "./tests-ordered.scss";
 import { usePatientQueuesList } from "./tests-ordered-list.resource";
 import { formatWaitTime, trimVisitNumber } from "../utils/functions";
-import TestOrders from "./patient-test-orders.component";
+import TestOrders from "./ordered-test-orders.component";
 
 const TestsOrderedList: React.FC = () => {
   const { t } = useTranslation();

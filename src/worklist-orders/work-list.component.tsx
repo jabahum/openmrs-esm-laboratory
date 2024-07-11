@@ -20,7 +20,7 @@ import {
 import styles from "./work-list.scss";
 import { usePagination, useSession } from "@openmrs/esm-framework";
 import { usePatientQueuesList } from "../ordered-orders/tests-ordered-list.resource";
-import TestOrders from "../ordered-orders/patient-test-orders.component";
+import TestOrders from "../ordered-orders/ordered-test-orders.component";
 import WorkListTestOrders from "./work-list-test-orders.component";
 
 const WorkList: React.FC = () => {

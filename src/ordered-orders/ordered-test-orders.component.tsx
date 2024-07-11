@@ -19,7 +19,7 @@ import { ExtensionSlot, useLayoutType } from "@openmrs/esm-framework";
 import { usePatientLabOrders } from "../patient-test-orders/patient-test-orders.resource";
 import styles from "./tests-ordered.scss";
 import OrderCustomOverflowMenuComponent from "../ui-components/overflow-menu.component";
-import ScheduleTestOrdersButton from "./schedule-test-orders.component";
+import ScheduleTestOrdersButton from "./ordered-tests-actions/schedule-test-orders-button.component";
 
 interface TestOrderProps {
   patientUuid: string;

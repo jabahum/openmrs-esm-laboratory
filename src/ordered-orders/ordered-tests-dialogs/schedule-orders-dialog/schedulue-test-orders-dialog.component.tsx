@@ -19,18 +19,19 @@ import {
 } from "@carbon/react";
 import { Order } from "@openmrs/esm-patient-common-lib";
 import { useTranslation } from "react-i18next";
-import styles from "./add-to-worklist-dialog.scss";
+import styles from "../pick-orders-dialog/pick-order-dialog.scss";
 import {
   showNotification,
   showSnackbar,
   useLayoutType,
 } from "@openmrs/esm-framework";
+
+import { extractErrorMessagesFromResponse } from "../../../utils/functions";
 import {
   GenerateSpecimenId,
   useReferralLocations,
   useSpecimenTypes,
-} from "./add-to-worklist-dialog.resource";
-import { extractErrorMessagesFromResponse } from "../../utils/functions";
+} from "../pick-orders-dialog/pick-order-dialog.resource";
 interface ScheduleTestOrdersDialogProps {
   orders: Order[];
   closeModal: () => void;
@@ -172,7 +173,6 @@ const ScheduleTestOrdersDialog: React.FC<ScheduleTestOrdersDialogProps> = ({
               rows={tableRows}
               headers={tableHeaders}
               size={isTablet ? "lg" : "sm"}
-              useZebraStyles
             >
               {({
                 rows,

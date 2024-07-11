@@ -71,7 +71,7 @@ const ReviewTestOrders: React.FC<TestOrderProps> = ({ patientUuid }) => {
           <ExtensionSlot
             className={styles.menuLink}
             state={{ order: orders[index] }}
-            name="referred-order-actions-slot"
+            name="review-order-actions-slot"
           />
         </OrderCustomOverflowMenuComponent>
       ),

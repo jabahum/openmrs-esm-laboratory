@@ -14,7 +14,7 @@ import {
 import { ErrorState } from "@openmrs/esm-framework";
 import { Encounter } from "../../types/patient-queues";
 import styles from "../laboratory-queue.scss";
-import PickLabRequestActionMenu from "../pick-lab-request-menu.component";
+import PickLabRequestActionMenu from "../ordered-tests-actions/pick-test-order-menu.component";
 
 interface LabTestsProps {
   encounter: Encounter;

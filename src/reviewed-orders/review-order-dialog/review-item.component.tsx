@@ -8,7 +8,7 @@ import {
   InlineLoading,
 } from "@carbon/react";
 import { useTranslation } from "react-i18next";
-import styles from "../dialog/review-item.scss";
+import styles from "./review-item.scss";
 import {
   GroupMember,
   useGetEncounterById,

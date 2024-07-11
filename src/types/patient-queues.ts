@@ -1,4 +1,4 @@
-import { Concept } from "../worklist-orders/work-list.resource";
+import { Order } from "@openmrs/esm-patient-common-lib";
 
 export interface PatientQueue {
   uuid: string;
@@ -169,14 +169,6 @@ export interface Ob {
   uuid: string;
   display: string;
   links: Link[];
-}
-
-export interface Order {
-  uuid: string;
-  display: string;
-  links: Link[];
-  type: string;
-  concept: Concept;
 }
 
 export interface Visit {

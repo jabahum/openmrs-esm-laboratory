@@ -1,8 +1,8 @@
 import { OverflowMenuItem } from "@carbon/react";
 import { showModal } from "@openmrs/esm-framework";
+import { Order } from "@openmrs/esm-patient-common-lib";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Order } from "../types/patient-queues";
 
 interface PickLabRequestActionMenuProps {
   order: Order;

@@ -11,7 +11,6 @@ import {
   TextInput,
 } from "@carbon/react";
 import { useTranslation } from "react-i18next";
-import styles from "./add-to-worklist-dialog.scss";
 import {
   showNotification,
   showSnackbar,
@@ -24,9 +23,10 @@ import {
   extractLetters,
   useReferralLocations,
   useSpecimenTypes,
-} from "./add-to-worklist-dialog.resource";
-import { Order } from "../../types/patient-queues";
-import { extractErrorMessagesFromResponse } from "../../utils/functions";
+} from "./pick-order-dialog.resource";
+import { extractErrorMessagesFromResponse } from "../../../utils/functions";
+import styles from "./pick-order-dialog.scss";
+import { Order } from "@openmrs/esm-patient-common-lib";
 
 interface AddToWorklistDialogProps {
   queueId;

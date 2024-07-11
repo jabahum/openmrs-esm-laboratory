@@ -6,8 +6,8 @@ import {
 } from "@openmrs/esm-framework";
 import { Tab, Tabs, TabList, TabPanels, TabPanel, Search } from "@carbon/react";
 import { useTranslation } from "react-i18next";
-import styles from "./tests-ordered.scss";
-import TestsOrderedList from "./tests-ordered-list.component";
+import styles from "./laboratory-tabs.scss";
+import TestsOrderedList from "../ordered-orders/tests-ordered-list.component";
 import { ComponentContext } from "@openmrs/esm-framework/src/internal";
 
 enum TabTypes {
