@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   DataTable,
   DataTableSkeleton,
@@ -9,24 +9,33 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  TableSelectAll,
-  TableSelectRow,
 } from "@carbon/react";
 import { OverflowMenuVertical } from "@carbon/react/icons";
 
 import { useTranslation } from "react-i18next";
-import { ExtensionSlot, useLayoutType } from "@openmrs/esm-framework";
+import {
+  ExtensionSlot,
+  formatDate,
+  parseDate,
+  useLayoutType,
+} from "@openmrs/esm-framework";
 import styles from "./work-list.scss";
 import OrderCustomOverflowMenuComponent from "../ui-components/overflow-menu.component";
 import { usePatientLabOrders } from "../patient-test-orders/patient-test-orders.resource";
 
 interface TestOrderProps {
   patientUuid: string;
+  orderNumberChange?: (patientUuid: string, ordersLeft: number) => void;
 }
 
-const WorkListTestOrders: React.FC<TestOrderProps> = ({ patientUuid }) => {
+const WorkListTestOrders: React.FC<TestOrderProps> = ({
+  patientUuid,
+  orderNumberChange,
+}) => {
   const { t } = useTranslation();
   const isTablet = useLayoutType() === "tablet";
+
+  const [ordersLeft, setOrdersLeft] = useState<number | null>(0);
 
   const { orders, isLoading } = usePatientLabOrders(patientUuid);
 
@@ -55,33 +64,47 @@ const WorkListTestOrders: React.FC<TestOrderProps> = ({ patientUuid }) => {
   ];
 
   const testRows = useMemo(() => {
-    return orders?.map((order, index) => ({
-      ...orders,
-      id: order?.uuid,
-      sampleId: order?.accessionNumber,
-      date: order.dateActivated,
-      tests: order?.display,
-      status: order?.fulfillerStatus,
-      actions: (
-        <OrderCustomOverflowMenuComponent
-          menuTitle={
-            <>
-              <OverflowMenuVertical
-                size={16}
-                style={{ marginLeft: "0.3rem" }}
-              />
-            </>
-          }
-        >
-          <ExtensionSlot
-            className={styles.menuLink}
-            state={{ order: orders[index] }}
-            name="worklist-order-actions-slot"
-          />
-        </OrderCustomOverflowMenuComponent>
-      ),
-    }));
+    return orders
+      ?.filter((order) => {
+        return order?.accessionNumber !== null && order?.dateActivated !== null;
+      })
+      .map((order, index) => ({
+        ...orders,
+        id: order?.uuid,
+        sampleId: order?.accessionNumber,
+        date: formatDate(parseDate(order?.dateActivated)),
+        test: order?.display,
+        status: order?.fulfillerStatus,
+        actions: (
+          <OrderCustomOverflowMenuComponent
+            menuTitle={
+              <>
+                <OverflowMenuVertical
+                  size={16}
+                  style={{ marginLeft: "0.3rem" }}
+                />
+              </>
+            }
+          >
+            <ExtensionSlot
+              className={styles.menuLink}
+              state={{ order: orders[index] }}
+              name="worklist-order-actions-slot"
+            />
+          </OrderCustomOverflowMenuComponent>
+        ),
+      }));
   }, [orders]);
+
+  useEffect(() => {
+    if (testRows.length >= 0) {
+      setOrdersLeft(orders.length);
+
+      if (typeof orderNumberChange === "function") {
+        orderNumberChange(patientUuid, ordersLeft);
+      }
+    }
+  }, [orders, orderNumberChange]);
 
   if (isLoading) {
     return <DataTableSkeleton />;
@@ -109,7 +132,6 @@ const WorkListTestOrders: React.FC<TestOrderProps> = ({ patientUuid }) => {
               <Table {...getTableProps()} aria-label="testorders">
                 <TableHead>
                   <TableRow>
-                    <TableSelectAll {...getSelectionProps()} />
                     {headers.map((header) => (
                       <TableHeader {...getHeaderProps({ header })}>
                         {header.header}
@@ -120,11 +142,6 @@ const WorkListTestOrders: React.FC<TestOrderProps> = ({ patientUuid }) => {
                 <TableBody>
                   {rows.map((row) => (
                     <TableRow {...getRowProps({ row })}>
-                      <TableSelectRow
-                        {...getSelectionProps({
-                          row,
-                        })}
-                      />
                       {row.cells.map((cell) => (
                         <TableCell key={cell.id} className={styles.testCell}>
                           {cell.value}

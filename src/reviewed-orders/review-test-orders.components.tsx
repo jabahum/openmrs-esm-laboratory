@@ -98,13 +98,11 @@ const ReviewTestOrders: React.FC<TestOrderProps> = ({ patientUuid }) => {
             getRowProps,
             getTableProps,
             getTableContainerProps,
-            getSelectionProps,
           }) => (
             <TableContainer {...getTableContainerProps()}>
               <Table {...getTableProps()} aria-label="testorders">
                 <TableHead>
                   <TableRow>
-                    <TableSelectAll {...getSelectionProps()} />
                     {headers.map((header) => (
                       <TableHeader {...getHeaderProps({ header })}>
                         {header.header}
@@ -115,11 +113,6 @@ const ReviewTestOrders: React.FC<TestOrderProps> = ({ patientUuid }) => {
                 <TableBody>
                   {rows.map((row) => (
                     <TableRow {...getRowProps({ row })}>
-                      <TableSelectRow
-                        {...getSelectionProps({
-                          row,
-                        })}
-                      />
                       {row.cells.map((cell) => (
                         <TableCell key={cell.id} className={styles.testCell}>
                           {cell.value}

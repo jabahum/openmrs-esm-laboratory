@@ -4,17 +4,17 @@ import { Order } from "@openmrs/esm-patient-common-lib";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 
-interface PickLabRequestActionMenuProps {
+interface PickTestOrderActionMenuProps {
   order: Order;
   closeModal: () => void;
 }
 
-const PickLabRequestActionMenu: React.FC<PickLabRequestActionMenuProps> = ({
+const PickTestOrderActionMenu: React.FC<PickTestOrderActionMenuProps> = ({
   order,
 }) => {
   const { t } = useTranslation();
   const launchPickLabRequestModal = useCallback(() => {
-    const dispose = showModal("add-to-worklist-dialog", {
+    const dispose = showModal("pick-lab-request-button", {
       closeModal: () => dispose(),
       order,
     });
@@ -31,4 +31,4 @@ const PickLabRequestActionMenu: React.FC<PickLabRequestActionMenuProps> = ({
   );
 };
 
-export default PickLabRequestActionMenu;
+export default PickTestOrderActionMenu;

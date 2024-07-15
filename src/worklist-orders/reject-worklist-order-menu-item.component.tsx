@@ -14,7 +14,7 @@ const RejectWorklistOrderActionMenu: React.FC<RejectOrderActionMenuProps> = ({
 }) => {
   const { t } = useTranslation();
   const launchRejectWorklistModal = useCallback(() => {
-    const dispose = showModal("add-to-worklist-dialog", {
+    const dispose = showModal("reject-order-button", {
       closeModal: () => dispose(),
       order,
     });

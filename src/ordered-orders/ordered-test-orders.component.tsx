@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   DataTable,
   DataTableSkeleton,
@@ -23,13 +23,23 @@ import ScheduleTestOrdersButton from "./ordered-tests-actions/schedule-test-orde
 
 interface TestOrderProps {
   patientUuid: string;
+  orderNumberChange?: (ordersLeft: number) => void;
 }
 
-const TestOrders: React.FC<TestOrderProps> = ({ patientUuid }) => {
+const TestOrders: React.FC<TestOrderProps> = ({
+  patientUuid,
+  orderNumberChange,
+}) => {
   const { t } = useTranslation();
   const isTablet = useLayoutType() === "tablet";
 
+  const [ordersLeft, setOrdersLeft] = useState<number | null>(0);
+
+  console.log("patientUuid--->" + JSON.stringify(patientUuid, null, 2));
+
   const { orders, isLoading } = usePatientLabOrders(patientUuid);
+
+  console.log("orders--->" + JSON.stringify(orders, null, 2));
 
   const testOrderHeaders: Array<{ key: string; header: string }> = [
     {
@@ -68,6 +78,16 @@ const TestOrders: React.FC<TestOrderProps> = ({ patientUuid }) => {
       ),
     }));
   }, [orders]);
+
+  useEffect(() => {
+    if (testRows.length >= 0) {
+      setOrdersLeft(orders.length);
+
+      if (typeof orderNumberChange === "function") {
+        orderNumberChange(ordersLeft);
+      }
+    }
+  }, [orders, orderNumberChange]);
 
   if (isLoading) {
     return <DataTableSkeleton />;
@@ -125,7 +145,7 @@ const TestOrders: React.FC<TestOrderProps> = ({ patientUuid }) => {
         </DataTable>
       </div>
       <div style={{ margin: "1rem" }}>
-        {orders.length > 0 && (
+        {testRows.length > 0 && (
           <ScheduleTestOrdersButton orders={orders} closeModal={() => true} />
         )}
       </div>

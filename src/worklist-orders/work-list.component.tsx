@@ -42,6 +42,14 @@ const WorkList: React.FC = () => {
   } = usePagination(patientQueueEntries, currentPageSize);
   // get picked orders
 
+  const [ordersCount, setOrdersCount] = useState<{
+    [patientUuid: string]: number;
+  }>({});
+
+  const updateOrdersCount = (patientUuid: string, number: number) => {
+    setOrdersCount((prev) => ({ ...prev, [patientUuid]: number }));
+  };
+
   const tableHeaders = useMemo(
     () => [
       { id: 0, header: t("patient", "Patient"), key: "name" },
@@ -57,7 +65,7 @@ const WorkList: React.FC = () => {
       name: {
         content: <span>{entry?.name}</span>,
       },
-      orders: "",
+      orders: ordersCount[entry.patientUuid] ?? 0,
     }));
   }, [paginatedQueueEntries]);
 
@@ -105,6 +113,9 @@ const WorkList: React.FC = () => {
                     <TableExpandedRow colSpan={headers.length + 1}>
                       <WorkListTestOrders
                         patientUuid={tableRows[index]?.patientUuid}
+                        orderNumberChange={(number) => {
+                          // updateOrdersCount(row.id, );
+                        }}
                       />
                     </TableExpandedRow>
                   </React.Fragment>

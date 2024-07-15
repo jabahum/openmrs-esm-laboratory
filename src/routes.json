@@ -164,12 +164,12 @@
         },
         {
             "name": "pick-lab-request-button",
-            "component": "pickLabRequestButton",
+            "component": "pickWorklistOrderButton",
             "slot": "tests-ordered-actions-slot"
         },
         {
             "name": "reject-order-button",
-            "component": "rejectOrderButton",
+            "component": "rejectWorklistOrderButton",
             "slot": "tests-ordered-actions-slot"
         },
 
@@ -178,11 +178,7 @@
             "component": "addOrEditOrderResultsButton",
             "slot": "worklist-order-actions-slot"
         },
-          {
-            "name": "edit-worklist-order-button",
-            "component": "addOrEditOrderResultsButton",
-            "slot": "worklist-order-actions-slot"
-        },
+
           {
             "name": "reject-worklist-order-button",
             "component": "rejectWorklistOrderButton",
@@ -196,7 +192,7 @@
 
          {
             "name": "edit-referred-order-results-button",
-            "component": "addorEditReferredOrderButton",
+            "component": "addOrEditReferredOrderButton",
             "slot": "referred-order-actions-slot"
         },
           {
