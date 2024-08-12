@@ -64,7 +64,6 @@ const ReferredOrdersList: React.FC = () => {
     { id: 1, header: t("orderNumber", "Order Number"), key: "orderNumber" },
     { id: 2, header: t("patient", "Patient"), key: "patient" },
     { id: 3, header: t("artNumber", "Art Number"), key: "artNumber" },
-
     {
       id: 4,
       header: t("accessionNumber", "Accession Number"),

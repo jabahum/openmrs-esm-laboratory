@@ -95,18 +95,18 @@ const WorkList: React.FC<WorklistProps> = ({ fulfillerStatus }) => {
     { id: 0, header: t("date", "Date"), key: "date" },
 
     { id: 1, header: t("orderNumber", "Order Number"), key: "orderNumber" },
-    { id: 2, header: t("patient", "Patient"), key: "patient" },
-
+    { id: 2, header: t("artNumber", "Art Number"), key: "artNumber" },
+    { id: 3, header: t("patient", "Patient"), key: "patient" },
     {
-      id: 3,
+      id: 4,
       header: t("accessionNumber", "Accession Number"),
       key: "accessionNumber",
     },
-    { id: 4, header: t("test", "Test"), key: "test" },
-    { id: 5, header: t("status", "Status"), key: "status" },
-    { id: 6, header: t("orderer", "Ordered By"), key: "orderer" },
-    { id: 7, header: t("urgency", "Urgency"), key: "urgency" },
-    { id: 8, header: t("actions", "Actions"), key: "actions" },
+    { id: 5, header: t("test", "Test"), key: "test" },
+    { id: 6, header: t("status", "Status"), key: "status" },
+    { id: 7, header: t("orderer", "Ordered By"), key: "orderer" },
+    { id: 8, header: t("urgency", "Urgency"), key: "urgency" },
+    { id: 9, header: t("actions", "Actions"), key: "actions" },
   ];
 
   const ResultsOrder = useCallback(
@@ -140,6 +140,14 @@ const WorkList: React.FC<WorklistProps> = ({ fulfillerStatus }) => {
         </ConfigurableLink>
       ),
       orderNumber: entry?.orderNumber,
+      artNumber: entry.patient?.identifiers
+        .find(
+          (item) =>
+            item?.identifierType?.uuid ===
+            "e1731641-30ab-102d-86b0-7a5022ba4115"
+        )
+        ?.display.split("=")[1]
+        .trim(),
       accessionNumber: entry?.accessionNumber,
       test: entry?.concept?.display,
       action: entry?.action,
