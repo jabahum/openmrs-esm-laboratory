@@ -28,7 +28,7 @@ import {
 import styles from "./laboratory-queue.scss";
 import { useGetOrdersWorklist } from "../work-list/work-list.resource";
 import OrderCustomOverflowMenuComponent from "../ui-components/overflow-menu.component";
-import { useOrderDate } from "../utils/functions";
+import { formatWaitTime, useOrderDate } from "../utils/functions";
 
 interface LaboratoryPatientListProps {}
 
@@ -95,7 +95,11 @@ const TestsOrderedList: React.FC<LaboratoryPatientListProps> = () => {
         action: entry?.action,
         orderer: entry?.orderer?.display,
         urgency: entry?.urgency,
-        waitTime: "N/A",
+        waitTime: (
+          <span className={styles["single-line-display"]}>
+            {formatWaitTime(entry?.dateActivated, t)}
+          </span>
+        ),
         actions: (
           <OrderCustomOverflowMenuComponent
             menuTitle={
