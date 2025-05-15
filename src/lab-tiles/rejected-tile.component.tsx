@@ -4,19 +4,24 @@ import SummaryTile from "../summary-tiles/summary-tile.component";
 import { useLabTestsStats } from "../summary-tiles/laboratory-summary.resource";
 import { useOrderDate } from "../utils/functions";
 
-const ApprovedTileComponent = () => {
+const RejectedTileComponent = () => {
   const { t } = useTranslation();
 
   const { currentOrdersDate } = useOrderDate();
-  const { data } = useLabTestsStats("COMPLETED", currentOrdersDate);
+
+  const { data } = useLabTestsStats("", currentOrdersDate);
+
+  const filteredData = data?.filter(
+    (item) => item?.fulfillerStatus === "DECLINED"
+  );
 
   return (
     <SummaryTile
-      label={t("completed", "Completed")}
-      value={data?.length}
-      headerLabel={t("approved", "Approved")}
+      label={t("orders", "Tests")}
+      value={filteredData?.length}
+      headerLabel={t("testsRejected", "Rejected")}
     />
   );
 };
 
-export default ApprovedTileComponent;
+export default RejectedTileComponent;

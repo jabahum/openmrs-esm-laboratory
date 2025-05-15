@@ -13,6 +13,7 @@ import {
 import { useTranslation } from "react-i18next";
 import styles from "./add-to-worklist-dialog.scss";
 import {
+  restBaseUrl,
   showNotification,
   showSnackbar,
   useConfig,
@@ -21,10 +22,15 @@ import { Renew } from "@carbon/react/icons";
 import {
   GenerateSpecimenId,
   UpdateOrder,
+  extractLetters,
   useReferralLocations,
   useSpecimenTypes,
 } from "./add-to-worklist-dialog.resource";
 import { Order } from "../../types/patient-queues";
+import {
+  extractErrorMessagesFromResponse,
+  handleMutate,
+} from "../../utils/functions";
 
 interface AddToWorklistDialogProps {
   queueId;
@@ -67,6 +73,7 @@ const AddToWorklistDialog: React.FC<AddToWorklistDialogProps> = ({
       specimenSourceId: specimenType,
       unProcessedOrders: "",
       patientQueueId: queueId,
+      referenceLab: preferred ? extractLetters(selectedReferral) : "",
     };
 
     UpdateOrder(order.uuid, body).then(
@@ -81,14 +88,18 @@ const AddToWorklistDialog: React.FC<AddToWorklistDialogProps> = ({
           ),
         });
         closeModal();
+        handleMutate(`${restBaseUrl}/order`);
       },
       (error) => {
+        const errorMessages = extractErrorMessagesFromResponse(error);
+
         showNotification({
           title: t(`errorPicking an order', 'Error Picking an Order`),
           kind: "error",
           critical: true,
-          description: error?.message,
+          description: errorMessages.join(", "),
         });
+        handleMutate(`${restBaseUrl}/order`);
       }
     );
   };
@@ -113,12 +124,14 @@ const AddToWorklistDialog: React.FC<AddToWorklistDialogProps> = ({
           ),
         });
       },
-      (err) => {
+      (error) => {
+        const errorMessages = extractErrorMessagesFromResponse(error);
+
         showNotification({
           title: t(`errorGeneratingId', 'Error Generating Sample Id`),
           kind: "error",
           critical: true,
-          description: err?.message,
+          description: errorMessages.join(", "),
         });
       }
     );
@@ -135,7 +148,7 @@ const AddToWorklistDialog: React.FC<AddToWorklistDialogProps> = ({
       <Form onSubmit={pickLabRequestQueue}>
         <ModalHeader
           closeModal={closeModal}
-          title={t("pickRequest", "Pick Lab Request")}
+          title={t("pickRequest", `Test : ${order?.concept?.display}`)}
         />
         <ModalBody>
           <div className={styles.modalBody}>
@@ -260,11 +273,20 @@ const AddToWorklistDialog: React.FC<AddToWorklistDialogProps> = ({
                         setSelectedReferral(event.target.value)
                       }
                     >
+                      {!selectedReferral ? (
+                        <SelectItem
+                          text={t(
+                            "selectAreferelPoint",
+                            "Select a referal point"
+                          )}
+                          value=""
+                        />
+                      ) : null}
                       {referrals.map((referral) => (
                         <SelectItem
                           key={referral.uuid}
                           text={referral.display}
-                          value={referral.uuid}
+                          value={referral.display}
                         >
                           {referral.display}
                         </SelectItem>

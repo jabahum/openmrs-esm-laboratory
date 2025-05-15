@@ -1,14 +1,21 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Calendar, Location } from "@carbon/react/icons";
-import { useSession, formatDate } from "@openmrs/esm-framework";
+import { Location } from "@carbon/react/icons";
+import { useSession } from "@openmrs/esm-framework";
 import LaboratoryIllustration from "./laboratory-illustration.component";
 import styles from "./laboratory-header.scss";
+import { DatePicker, DatePickerInput } from "@carbon/react";
+import dayjs from "dayjs";
+import { changeStartDate, useOrderDate } from "../utils/functions";
 
 export const LaboratoryHeader: React.FC = () => {
   const { t } = useTranslation();
+  const datePickerRef = useRef(null);
+
   const userSession = useSession();
   const userLocation = userSession?.sessionLocation?.display;
+
+  const { currentOrdersDate } = useOrderDate();
 
   return (
     <div className={styles.header}>
@@ -23,10 +30,25 @@ export const LaboratoryHeader: React.FC = () => {
           <Location size={16} />
           <span className={styles.value}>{userLocation}</span>
           <span className={styles.middot}>&middot;</span>
-          <Calendar size={16} />
-          <span className={styles.value}>
-            {formatDate(new Date(), { mode: "standard" })}
-          </span>
+          <DatePicker
+            onChange={([date]) => changeStartDate(new Date(date))}
+            ref={datePickerRef}
+            dateFormat="Y-m-d"
+            datePickerType="single"
+          >
+            <DatePickerInput
+              style={{
+                backgroundColor: "transparent",
+                border: "none",
+                maxWidth: "10rem",
+              }}
+              id="date-picker-calendar-id"
+              placeholder="YYYY-MM-DD"
+              labelText=""
+              type="text"
+              value={dayjs(currentOrdersDate).format("YYYY-MM-DD")}
+            />
+          </DatePicker>
         </div>
       </div>
     </div>

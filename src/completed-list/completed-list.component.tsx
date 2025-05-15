@@ -22,13 +22,10 @@ import {
   TableToolbarContent,
   Layer,
   TableToolbarSearch,
-  DatePicker,
-  DatePickerInput,
   DataTableSkeleton,
-  Tag,
 } from "@carbon/react";
 import styles from "./completed-list.scss";
-import { getStatusColor } from "../utils/functions";
+import { getStatusColor, useOrderDate } from "../utils/functions";
 
 interface CompletedListProps {
   fulfillerStatus: string;
@@ -37,39 +34,45 @@ interface CompletedListProps {
 const CompletedList: React.FC<CompletedListProps> = ({ fulfillerStatus }) => {
   const { t } = useTranslation();
 
-  const { workListEntries, isLoading } = useGetOrdersWorklist(fulfillerStatus);
+  const { currentOrdersDate } = useOrderDate();
+
+  const { data: completedOrderList, isLoading } = useGetOrdersWorklist(
+    fulfillerStatus,
+    currentOrdersDate
+  );
 
   const pageSizes = [10, 20, 30, 40, 50];
   const [currentPageSize, setPageSize] = useState(10);
 
   const {
     goTo,
-    results: paginatedWorkListEntries,
+    results: paginatedCompletedOrderEntries,
     currentPage,
-  } = usePagination(workListEntries, currentPageSize);
+  } = usePagination(completedOrderList, currentPageSize);
 
   const tableColumns = [
     { id: 0, header: t("date", "Date"), key: "date" },
     { id: 1, header: t("orderNumber", "Order Number"), key: "orderNumber" },
-    { id: 2, header: t("patient", "Patient"), key: "patient" },
+    { id: 2, header: t("artNumber", "Art Number"), key: "artNumber" },
+    { id: 3, header: t("patient", "Patient"), key: "patient" },
     {
-      id: 3,
+      id: 4,
       header: t("accessionNumber", "Accession Number"),
       key: "accessionNumber",
     },
-    { id: 4, header: t("test", "Test"), key: "test" },
-    { id: 5, header: t("action", "Action"), key: "action" },
+    { id: 5, header: t("test", "Test"), key: "test" },
     { id: 6, header: t("status", "Status"), key: "status" },
-    { id: 7, header: t("orderer", "Orderer"), key: "orderer" },
+    { id: 7, header: t("orderer", "Ordered By"), key: "orderer" },
     { id: 8, header: t("urgency", "Urgency"), key: "urgency" },
   ];
 
   const tableRows = useMemo(() => {
-    return paginatedWorkListEntries
+    return paginatedCompletedOrderEntries
       ?.filter(
         (item) =>
-          (item.action === "DISCONTINUE" || item.action === "REVISE") &&
-          item.fulfillerStatus === fulfillerStatus
+          item?.fulfillerStatus === fulfillerStatus ||
+          item?.action === "NEW" ||
+          item?.action === "REVISE"
       )
       .map((entry) => ({
         ...entry,
@@ -78,12 +81,20 @@ const CompletedList: React.FC<CompletedListProps> = ({ fulfillerStatus }) => {
 
         patient: (
           <ConfigurableLink
-            to={`\${openmrsSpaBase}/patient/${entry?.patient?.uuid}/chart/laboratory-orders`}
+            to={`\${openmrsSpaBase}/patient/${entry?.patient?.uuid}/chart/Results`}
           >
-            {entry?.patient?.display.split("-")[1]}
+            {entry?.patient?.names[0]?.display}
           </ConfigurableLink>
         ),
         orderNumber: entry?.orderNumber,
+        artNumber: entry.patient?.identifiers
+          .find(
+            (item) =>
+              item?.identifierType?.uuid ===
+              "e1731641-30ab-102d-86b0-7a5022ba4115"
+          )
+          ?.display.split("=")[1]
+          .trim(),
         accessionNumber: entry?.accessionNumber,
         test: entry?.concept?.display,
         action: entry?.action,
@@ -99,13 +110,13 @@ const CompletedList: React.FC<CompletedListProps> = ({ fulfillerStatus }) => {
         orderType: entry?.orderType.display,
         urgency: entry?.urgency,
       }));
-  }, [fulfillerStatus, paginatedWorkListEntries]);
+  }, [fulfillerStatus, paginatedCompletedOrderEntries]);
 
   if (isLoading) {
     return <DataTableSkeleton role="progressbar" />;
   }
 
-  if (paginatedWorkListEntries?.length >= 0) {
+  if (paginatedCompletedOrderEntries?.length >= 0) {
     return (
       <DataTable rows={tableRows} headers={tableColumns} useZebraStyles>
         {({
@@ -179,7 +190,7 @@ const CompletedList: React.FC<CompletedListProps> = ({ fulfillerStatus }) => {
               page={currentPage}
               pageSize={currentPageSize}
               pageSizes={pageSizes}
-              totalItems={workListEntries?.length}
+              totalItems={completedOrderList?.length}
               className={styles.pagination}
               onChange={({ pageSize, page }) => {
                 if (pageSize !== currentPageSize) {
