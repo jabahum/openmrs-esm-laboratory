@@ -36,14 +36,12 @@ import {
   TableExpandRow,
   TableExpandedRow,
   Button,
-  IconButton,
   InlineLoading,
 } from "@carbon/react";
 
 import {
   Printer,
   MailAll,
-  Add,
   Checkmark,
   SendAlt,
   NotSent,
@@ -52,11 +50,10 @@ import {
 import TestsResults from "../results-summary/test-results-table.component";
 import { useReactToPrint } from "react-to-print";
 import PrintResultsSummary from "../results-summary/print-results-summary.component";
-import { useGetPatientByUuid } from "../../utils/functions";
+import { OrderTagStyle, useGetPatientByUuid } from "../../utils/functions";
 import {
   ResourceRepresentation,
   Result,
-  getOrderColor,
 } from "../patient-laboratory-order-results.resource";
 import { useLaboratoryOrderResultsPages } from "../patient-laboratory-order-results-table.resource";
 import {
@@ -64,6 +61,7 @@ import {
   launchPatientWorkspace,
 } from "@openmrs/esm-patient-common-lib";
 import { mutate } from "swr";
+import { REFERINSTRUCTIONS } from "../../constants";
 
 interface LaboratoryOrderReferalResultsProps {
   patientUuid: string;
@@ -83,8 +81,12 @@ const LaboratoryOrderReferalResults: React.FC<
 > = ({ patientUuid }) => {
   const { t } = useTranslation();
 
-  const { enableSendingLabTestsByEmail, laboratoryEncounterTypeUuid } =
-    useConfig();
+  const {
+    enableSendingLabTestsByEmail,
+    laboratoryEncounterTypeUuid,
+    artCardEncounterTypeUuid,
+    laboratoryOrderTypeUuid,
+  } = useConfig();
 
   const displayText = t(
     "referralLaboratoryTestsDisplayTextTitle",
@@ -93,7 +95,6 @@ const LaboratoryOrderReferalResults: React.FC<
 
   const {
     items,
-    tableHeaders,
     currentPage,
     pageSizes,
     totalItems,
@@ -111,15 +112,26 @@ const LaboratoryOrderReferalResults: React.FC<
 
   const sortedLabRequests = useMemo(() => {
     return [...items]
-      ?.filter(
-        (item) => item?.encounterType?.uuid === laboratoryEncounterTypeUuid
-      )
+      ?.filter((item) => {
+        const { encounterType, orders } = item || {};
+        const { uuid: encounterTypeUuid } = encounterType || {};
+
+        // Check if the encounterType UUID matches either of the specified UUIDs
+
+        // Filter orders to only include those with the matching orderType UUID
+        const matchingOrders = orders?.filter(
+          (order) => order?.instructions === REFERINSTRUCTIONS
+        );
+
+        // Return the item only if it has matching encounterType and at least one matching order
+        return matchingOrders?.length > 0;
+      })
       ?.sort((a, b) => {
         const dateA = new Date(a.encounterDatetime);
         const dateB = new Date(b.encounterDatetime);
         return dateB.getTime() - dateA.getTime();
       });
-  }, [items, laboratoryEncounterTypeUuid]);
+  }, [items]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [laboratoryOrders, setLaboratoryOrders] = useState(sortedLabRequests);
@@ -193,13 +205,6 @@ const LaboratoryOrderReferalResults: React.FC<
     );
   };
 
-  const LaunchLabRequestForm: React.FC = () => {
-    return (
-      <IconButton label="Add">
-        <Add />
-      </IconButton>
-    );
-  };
   const PrintButtonAction: React.FC<PrintProps> = ({ encounter }) => {
     const { patient } = useGetPatientByUuid(encounter.patient.uuid);
 
@@ -256,8 +261,7 @@ const LaboratoryOrderReferalResults: React.FC<
       { id: 1, header: t("tests", "Tests"), key: "orders" },
       { id: 2, header: t("location", "Location"), key: "location" },
       { id: 3, header: t("status", "Status"), key: "status" },
-      { id: 4, header: t("referral", "Referral"), key: "referral" },
-      { id: 5, header: t("actions", "Action"), key: "actions" },
+      { id: 4, header: t("actions", "Action"), key: "actions" },
     ],
     [t]
   );
@@ -266,63 +270,44 @@ const LaboratoryOrderReferalResults: React.FC<
     return laboratoryOrders?.map((entry, index) => ({
       ...entry,
       id: entry?.uuid,
-      orderDate: {
-        content: (
-          <span>
-            {formatDate(parseDate(entry.encounterDatetime), {
-              time: true,
-              mode: "standard",
-            })}
-          </span>
-        ),
-      },
-      orders: {
-        content: (
-          <>
-            {entry?.orders
-              ?.filter(
-                (order) =>
-                  order?.type === "testorder" && order?.action === "NEW"
-              )
-              .map((order) => (
+      orderDate: formatDate(parseDate(entry.encounterDatetime), {
+        mode: "standard",
+        time: true,
+      }),
+      orders: (
+        <>
+          {entry?.orders?.map((order) => {
+            if (
+              (order?.action === "NEW" ||
+                order?.action === "REVISE" ||
+                order?.action === "DISCONTINUE") &&
+              order.instructions === REFERINSTRUCTIONS
+            ) {
+              return (
                 <Tag
-                  style={{
-                    background: `${getOrderColor(
-                      order.dateActivated,
-                      order.dateStopped
-                    )}`,
-                    color: "white",
-                  }}
+                  style={OrderTagStyle(order)}
                   role="tooltip"
                   key={order?.uuid}
                 >
                   {order?.display}
                 </Tag>
-              ))}
-          </>
-        ),
-      },
-      location: {
-        content: <span>{entry?.location?.display}</span>,
-      },
-      status: {
-        content: <span>--</span>,
-      },
-      referral: {
-        content: <span>--</span>,
-      },
-      actions: {
-        content: (
-          <div style={{ display: "flex" }}>
-            <EditReferralAction
-              formUuid={entry[index]?.form?.uuid}
-              encounterUuid={entry[index]?.uuid}
-            />
-            <PrintButtonAction encounter={entry} />
-            {enableSendingLabTestsByEmail && <EmailButtonAction />}
-          </div>
-        ),
-      },
+              );
+            }
+          })}
+        </>
+      ),
+      location: entry?.location?.display,
+      status: "--",
+      actions: (
+        <div style={{ display: "flex" }}>
+          <EditReferralAction
+            formUuid={entry[index]?.form?.uuid}
+            encounterUuid={entry[index]?.uuid}
+          />
+          <PrintButtonAction encounter={entry} />
+          {enableSendingLabTestsByEmail && <EmailButtonAction />}
+        </div>
+      ),
     }));
   }, [enableSendingLabTestsByEmail, laboratoryOrders]);
 

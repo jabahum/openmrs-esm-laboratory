@@ -2,25 +2,25 @@ import React, { useState } from "react";
 
 import {
   Button,
-  ContentSwitcher,
   Form,
   ModalBody,
   ModalFooter,
   ModalHeader,
-  Select,
-  SelectItem,
-  Switch,
   TextArea,
-  Grid,
-  Checkbox,
-  TextInput,
-  IconButton,
 } from "@carbon/react";
 import { useTranslation } from "react-i18next";
 import styles from "./reject-order-dialog.scss";
 import { Result } from "../work-list/work-list.resource";
 import { RejectOrder } from "./reject-order-dialog.resource";
-import { showNotification, showSnackbar } from "@openmrs/esm-framework";
+import {
+  restBaseUrl,
+  showNotification,
+  showSnackbar,
+} from "@openmrs/esm-framework";
+import {
+  extractErrorMessagesFromResponse,
+  handleMutate,
+} from "../utils/functions";
 
 interface RejectOrderDialogProps {
   order: Result;
@@ -39,7 +39,7 @@ const RejectOrderDialog: React.FC<RejectOrderDialogProps> = ({
     event.preventDefault();
 
     const payload = {
-      fulfillerStatus: "EXCEPTION", // Todo changed to Declined when UgEMR module is upgraded to 2.6.1
+      fulfillerStatus: "DECLINED", // Todo changed to Declined when UgEMR module is upgraded to 2.6.1
       fulfillerComment: notes,
     };
     RejectOrder(order.uuid, payload).then(
@@ -54,14 +54,18 @@ const RejectOrderDialog: React.FC<RejectOrderDialogProps> = ({
           ),
         });
         closeModal();
+        handleMutate(`${restBaseUrl}/order`);
       },
-      (err) => {
+      (error) => {
+        const errorMessages = extractErrorMessagesFromResponse(error);
+
         showNotification({
           title: t(`errorRejecting order', 'Error Rejecting a order`),
           kind: "error",
           critical: true,
-          description: err?.message,
+          description: errorMessages.join(", "),
         });
+        handleMutate(`${restBaseUrl}/order`);
       }
     );
   };

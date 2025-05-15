@@ -1,22 +1,15 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import styles from "./laboratory-summary-tiles.scss";
 import {
   AssignedExtension,
-  ExtensionSlot,
   useConnectedExtensions,
-  useSession,
-  attach,
-  detachAll,
   Extension,
 } from "@openmrs/esm-framework";
 import { ComponentContext } from "@openmrs/esm-framework/src/internal";
-import SummaryTile from "./summary-tile.component";
 
 const LaboratorySummaryTiles: React.FC = () => {
   const { t } = useTranslation();
-
-  const session = useSession();
 
   const labTileSlot = "lab-tiles-slot";
 
@@ -33,6 +26,7 @@ const LaboratorySummaryTiles: React.FC = () => {
             <ComponentContext.Provider
               key={extension.id}
               value={{
+                featureName: "LabTiles",
                 moduleName: extension.moduleName,
                 extension: {
                   extensionId: extension.id,
