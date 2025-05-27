@@ -1,10 +1,5 @@
-import {
-  formatDate,
-  openmrsFetch,
-  restBaseUrl,
-  useConfig,
-} from "@openmrs/esm-framework";
-import useSWR from "swr";
+import { openmrsFetch, restBaseUrl, useConfig } from '@openmrs/esm-framework';
+import useSWR from 'swr';
 
 export interface LaboratoryResponse {
   results: Result[];
@@ -139,7 +134,7 @@ export interface Ob {
   groupMembers: GroupMember[];
   comment: any;
   location: Location;
-  order: any;
+  order: Order;
   encounter: Encounter;
   voided: boolean;
   value: any;
@@ -339,7 +334,7 @@ export interface Order {
   orderReasonNonCoded: any;
   orderType: OrderType;
   urgency: string;
-  instructions: any;
+  instructions: string;
   commentToFulfiller: any;
   display: string;
   specimenSource: any;
@@ -401,20 +396,6 @@ export interface OrderType {
   resourceVersion: string;
 }
 
-export const getOrderColor = (activated: string, stopped: string) => {
-  const numAct = formatWaitTime(activated);
-  let testStopped: Number;
-  if (stopped === null) {
-    testStopped = 0;
-  }
-
-  if (numAct >= 0 && testStopped === 0) {
-    return "#6F6F6F"; // #6F6F6F
-  } else {
-    return "green"; // green
-  }
-};
-
 export const formatWaitTime = (waitTime: string) => {
   const num = parseInt(waitTime);
   const hours = num / 60;
@@ -425,9 +406,9 @@ export const formatWaitTime = (waitTime: string) => {
 };
 
 export enum ResourceRepresentation {
-  Default = "default",
-  Full = "full",
-  REF = "ref",
+  Default = 'default',
+  Full = 'full',
+  REF = 'ref',
 }
 
 export interface ResourceFilterCriteria {
@@ -444,36 +425,44 @@ export interface LaboratoryOrderFilter extends ResourceFilterCriteria {
 
 export function toQueryParams<T extends ResourceFilterCriteria>(
   filterCriteria?: T | null,
-  skipEmptyString = true
+  skipEmptyString = true,
 ): string {
-  if (!filterCriteria) return "";
+  if (!filterCriteria) return '';
   const queryParams: string = Object.keys(filterCriteria)
     ?.map((key) => {
       const value = filterCriteria[key];
-      return (skipEmptyString &&
-        (value === false || value === true ? true : value)) ||
-        (!skipEmptyString &&
-          (value === "" || (value === false || value === true ? true : value)))
+      return (skipEmptyString && (value === false || value === true ? true : value)) ||
+        (!skipEmptyString && (value === '' || (value === false || value === true ? true : value)))
         ? `${encodeURIComponent(key)}=${encodeURIComponent(value.toString())}`
         : null;
     })
     .filter((o) => o != null)
-    .join("&");
-  return queryParams.length > 0 ? "?" + queryParams : "";
+    .join('&');
+  return queryParams.length > 0 ? '?' + queryParams : '';
 }
 
 export function usePatientLaboratoryOrders(filter: LaboratoryOrderFilter) {
   const config = useConfig();
-  const { laboratoryEncounterTypeUuid } = config;
+  const { laboratoryEncounterTypeUuid, laboratoryOrderTypeUuid } = config;
 
   const apiUrl = `${restBaseUrl}/encounter?patient=${filter.patientUuid}&encounterType=${laboratoryEncounterTypeUuid}&v=${filter.v}&totalCount=true`;
-  const { data, error, isLoading } = useSWR<
-    { data: LaboratoryResponse },
-    Error
-  >(apiUrl, openmrsFetch, { refreshInterval: 3000 });
+  const { data, error, isLoading } = useSWR<{ data: LaboratoryResponse }, Error>(apiUrl, openmrsFetch);
+
+  const filteredItems = data?.data?.results
+    ? data.data.results
+        .map((item) => ({
+          ...item,
+          orders: item.orders.filter(
+            (order) =>
+              order?.orderType?.uuid !== '131168f4-15f5-102d-96e4-000c29c2a5d7' &&
+              order.orderType?.uuid === laboratoryOrderTypeUuid,
+          ),
+        }))
+        .filter((item) => item.orders.length > 0)
+    : [];
 
   return {
-    items: data?.data ? data?.data?.results : [],
+    items: filteredItems,
     isLoading,
     isError: error,
   };
@@ -481,10 +470,7 @@ export function usePatientLaboratoryOrders(filter: LaboratoryOrderFilter) {
 
 export function useGetEncounterById(encounterUuid: string) {
   const apiUrl = `${restBaseUrl}/encounter/${encounterUuid}?v=full`;
-  const { data, error, isLoading } = useSWR<{ data: Result }, Error>(
-    apiUrl,
-    openmrsFetch
-  );
+  const { data, error, isLoading } = useSWR<{ data: Result }, Error>(apiUrl, openmrsFetch);
 
   return {
     encounter: data?.data,

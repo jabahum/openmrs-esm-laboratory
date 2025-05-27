@@ -1,8 +1,8 @@
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { Tile, Button } from "@carbon/react";
-import { ArrowRight } from "@carbon/react/icons";
-import styles from "./summary-tile.scss";
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Tile, Button } from '@carbon/react';
+import { ArrowRight } from '@carbon/react/icons';
+import styles from './summary-tile.scss';
 
 interface SummaryTileProps {
   label: string;
@@ -11,12 +11,7 @@ interface SummaryTileProps {
   children?: React.ReactNode;
 }
 
-const SummaryTile: React.FC<SummaryTileProps> = ({
-  label,
-  value,
-  headerLabel,
-  children,
-}) => {
+const SummaryTile: React.FC<SummaryTileProps> = ({ label, value, headerLabel, children }) => {
   const { t } = useTranslation();
 
   return (
@@ -27,16 +22,6 @@ const SummaryTile: React.FC<SummaryTileProps> = ({
           {children}
         </div>
         <div></div>
-        <Button
-          kind="ghost"
-          renderIcon={(props) => (
-            <ArrowRight size={16} className={styles.arrowIcon} />
-          )}
-          iconDescription={t("view", "View ")}
-        >
-          {t("view", "View ")}
-          &nbsp;
-        </Button>
       </div>
       <div>
         <label className={styles.totalsLabel}>{label}</label>
